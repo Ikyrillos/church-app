@@ -19,7 +19,7 @@ class MyHttpOverrides extends HttpOverrides {
 class DioHelper {
   static late Dio dio;
 
-  static String api = Endpoints.TEST_BASE_URL;
+  static String api = Endpoints.BASE_URL;
 
   static void initialize() {
     dio = Dio(

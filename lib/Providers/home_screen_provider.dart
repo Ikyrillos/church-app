@@ -14,6 +14,7 @@ class HomeScreenProvider extends ChangeNotifier {
   bool hasaddclassattendancePermission = false;
   bool hasaaddattendancePermission = false;
   bool hasaaddMakhdomPermission = false;
+  bool hasUpdateMakhdomsPermission = false;
 
   void getStoredUser(BuildContext context) async {
     final userJson =
@@ -49,7 +50,7 @@ class HomeScreenProvider extends ChangeNotifier {
 
         if (permissionName == 'getmakhdoms') {
           hasGetMakhdomsPermission = true;
-        } else if (permissionName == 'manage_makhdom') {
+        } else if (permissionName == 'mangemakhdoms') {
           hasManageMakhdomsPermission = true;
         } else if (permissionName == 'add_classattendance') {
           hasaddclassattendancePermission = true;
@@ -57,6 +58,8 @@ class HomeScreenProvider extends ChangeNotifier {
           hasaaddattendancePermission = true;
         } else if (permissionName == 'add_makhdom') {
           hasaaddMakhdomPermission = true;
+        }else if (permissionName == 'updatemakdoms') {
+          hasUpdateMakhdomsPermission = true;
         }
 
         permisions.add(permissionName);

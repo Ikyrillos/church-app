@@ -23,7 +23,7 @@ class CheckBoxAddAttendanceRepository extends Repository {
     return exceptionHandler(
       () async {
         final Map<String, dynamic> response =
-            await dioHelper.getData(endPont: Endpoints.allNames);
+            await dioHelper.getData(endPont: Endpoints.REQUEST_GET_ALL_NAMES);
 
         printWarning(
             'Response from server: $response'); // تحقق من البيانات المسترجعة
