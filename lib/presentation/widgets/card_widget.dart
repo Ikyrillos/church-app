@@ -6,7 +6,7 @@ class CardWidget extends StatelessWidget {
   final String screenTitle;
   final void Function()? handleTap;
   final IconData _iconData;
-  CardWidget(this.screenTitle, this.handleTap, this._iconData);
+  const CardWidget(this.screenTitle, this.handleTap, this._iconData, {super.key});
   @override
   Widget build(BuildContext context) {
     return Card(

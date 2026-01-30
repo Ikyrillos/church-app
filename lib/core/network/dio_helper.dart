@@ -56,7 +56,7 @@ class DioHelper {
     log("from onRequestHandler");
     final token =
         AppSharedPreferences.getString(SharedPreferencesKeys.accessToken);
-    log(token.toString() + " token");
+    log("$token token");
     if (token != null && token.isNotEmpty) {
       req.headers['Authorization'] = " $token";
     }
@@ -76,7 +76,7 @@ class DioHelper {
 
   Future<dynamic> postData(String parameter, dynamic data,
       {Options? options}) async {
-    final response = await dio.post("${api + parameter}",
+    final response = await dio.post(api + parameter,
         data: data,
         options: options ??
             Options(
@@ -89,7 +89,7 @@ class DioHelper {
 
   Future<dynamic> postDataWithOtherBaseUrl(String parameter,
       {dynamic data, Options? options}) async {
-    final response = await dio.post('$parameter',
+    final response = await dio.post(parameter,
         data: data,
         options: options ??
             Options(
@@ -148,7 +148,7 @@ class DioHelper {
   ) async {
     log('$api$parameter');
     log(data.toString());
-    final response = await dio.put("${api + parameter}",
+    final response = await dio.put(api + parameter,
         data: json.encoder.convert(data),
         options: Options(
           contentType: 'application/json',
@@ -176,7 +176,7 @@ class DioHelper {
     bool? isVersion1,
   }) async {
     final response = await dio.get(
-      "${api + endPont}",
+      api + endPont,
       options: Options(
         headers: <String, dynamic>{
           'Authorization': ' $token',
@@ -192,7 +192,7 @@ class DioHelper {
     bool? isVersion1,
   }) async {
     final response = await dio.get(
-      "$url",
+      url,
       options: Options(
         headers: <String, dynamic>{
           'Authorization': ' $token',
@@ -267,10 +267,10 @@ class DioHelper {
 
   dynamic handleResponse(Response response) {
     if (response.statusCode.toString()[0] != "2") {
-      throw DioError(
+      throw DioException(
         response: response,
         requestOptions: response.requestOptions,
-        type: DioErrorType.badResponse,
+        type: DioExceptionType.badResponse,
       );
     }
     return response.data;

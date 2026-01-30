@@ -36,7 +36,7 @@ class AddMakhdomProvider extends ChangeNotifier {
   int? selectedKhadem = 2;
   List<DropdownModel>? dropdownList = [];
 
-  validate(BuildContext context) {
+  void validate(BuildContext context) {
     if (formKey.currentState!.validate()) {
       printDone('Validated');
       UserModel? recievedUserModel = LoginProvider().user;
@@ -77,7 +77,7 @@ class AddMakhdomProvider extends ChangeNotifier {
     }
   }
 
-  clearForm() {
+  void clearForm() {
     nameController.text = '';
     phoneController.text = '';
     phone2Controller.text = '';
@@ -95,7 +95,7 @@ class AddMakhdomProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-  changeBirthdate(DateTime? selected) {
+  void changeBirthdate(DateTime? selected) {
     birthdate = intl.DateFormat('yyyy-MM-dd').format(selected!);
     printWarning('NEW BIRTHDAY $birthdate');
     notifyListeners();

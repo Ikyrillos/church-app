@@ -65,6 +65,7 @@ class MakhdomDetailsProvider extends ChangeNotifier {
       },
     );
     notifyListeners();
+    return null;
 
     //  }
   }
@@ -77,7 +78,7 @@ class MakhdomDetailsProvider extends ChangeNotifier {
     return formattedDate;
   }
 
-  changeBirthdate(DateTime? selected) {
+  void changeBirthdate(DateTime? selected) {
     recievedMakhdom!.birthdate =
         intl.DateFormat('yyyy-MM-dd').format(selected!);
     printWarning('NEW BIRTHDAY ${recievedMakhdom!.birthdate ?? ''}');

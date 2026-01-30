@@ -17,8 +17,8 @@ class MakdomList extends StatelessWidget {
   final void Function()? handlePress;
   final bool addAttendance;
 
-  MakdomList(
-      this.makhdom, this.actionIcon, this.handlePress, this.addAttendance);
+  const MakdomList(
+      this.makhdom, this.actionIcon, this.handlePress, this.addAttendance, {super.key});
 
   @override
   Widget build(BuildContext context) {

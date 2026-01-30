@@ -27,7 +27,7 @@ class _AddClassAttendanceScreenState extends State<AddClassAttendanceScreen> {
     super.initState();
   }
 
-  callMyMakhdomsApi() async {
+  Future<void> callMyMakhdomsApi() async {
     Future.delayed(Duration.zero, () {
       Provider.of<AddClassAttendanceProvider>(context, listen: false)
           .myMakhdoms(context)
@@ -94,11 +94,8 @@ class _AddClassAttendanceScreenState extends State<AddClassAttendanceScreen> {
                             itemBuilder: (ctx, index) {
                               return ListTile(
                                 title: Text(
-                                  (index + 1).toString() +
-                                          ' -   ' +
-                                          addclassattendanceprovider
-                                              .items[index].name
-                                              .toString() ??
+                                  '${index + 1} -   ${addclassattendanceprovider
+                                              .items[index].name}' ??
                                       '',
                                   textAlign: TextAlign.start,
                                   overflow: TextOverflow.ellipsis,
@@ -108,7 +105,7 @@ class _AddClassAttendanceScreenState extends State<AddClassAttendanceScreen> {
                                       17.0, Colors.black, FontWeight.bold),
                                 ),
                                 leading: CupertinoSwitch(
-                                  activeColor: Colors.blue,
+                                  activeTrackColor: Colors.blue,
                                   value: addclassattendanceprovider
                                       .makhdomsAttendance[index].value,
                                   onChanged: (newvalue) {

@@ -12,11 +12,11 @@ Future<DateTime?> customShowDatePicker(BuildContext context) async =>
       maxDate: DateTime.now(),
       contentPadding: const EdgeInsets.all(6.0),
       padding: EdgeInsets.symmetric(horizontal: 40.w, vertical: 120.h),
-      daysNameTextStyle:
+      daysOfTheWeekTextStyle:
           AppStylesUtil.textRegularStyle(14.0, Colors.black, FontWeight.w400),
       leadingDateTextStyle:
           AppStylesUtil.textBoldStyle(20.0, Colors.blue, FontWeight.bold),
-      enabledCellTextStyle:
+      enabledCellsTextStyle:
           AppStylesUtil.textRegularStyle(16.0, Colors.black, FontWeight.w400),
       selectedCellTextStyle:
           AppStylesUtil.textBoldStyle(16.0, Colors.white, FontWeight.w400),

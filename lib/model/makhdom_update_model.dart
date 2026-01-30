@@ -21,13 +21,11 @@ class MakhdomUpdateModel {
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = Map<String, dynamic>();
+    final Map<String, dynamic> data = <String, dynamic>{};
     data['code'] = code;
     data['errorMsg'] = errorMsg;
-    if (data != null) {
-      data['data'] = this.data!.toJson();
-    }
-    data['count'] = count;
+    data['data'] = this.data!.toJson();
+      data['count'] = count;
     data['pageNo'] = pageNo;
     data['success'] = success;
     data['listData'] = listData;
@@ -137,7 +135,7 @@ class Data {
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = Map<String, dynamic>();
+    final Map<String, dynamic> data = <String, dynamic>{};
     data['id'] = id;
     data['name'] = name;
     data['phone'] = phone;
@@ -200,7 +198,7 @@ class Attendances {
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = Map<String, dynamic>();
+    final Map<String, dynamic> data = <String, dynamic>{};
     data['attId'] = attId;
     data['makhdomeId'] = makhdomeId;
     data['date'] = date;
@@ -265,7 +263,7 @@ class Time {
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = Map<String, dynamic>();
+    final Map<String, dynamic> data = <String, dynamic>{};
     data['ticks'] = ticks;
     data['days'] = days;
     data['hours'] = hours;
@@ -299,7 +297,7 @@ class Gender {
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = Map<String, dynamic>();
+    final Map<String, dynamic> data = <String, dynamic>{};
     data['id'] = id;
     data['name'] = name;
     data['makhdoms'] = makhdoms;
@@ -328,7 +326,7 @@ class Group {
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = Map<String, dynamic>();
+    final Map<String, dynamic> data = <String, dynamic>{};
     data['groupId'] = groupId;
     data['groupName'] = groupName;
     if (khadems != null) {
@@ -396,7 +394,7 @@ class Khadems {
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = Map<String, dynamic>();
+    final Map<String, dynamic> data = <String, dynamic>{};
     data['id'] = id;
     data['name'] = name;
     data['phone1'] = phone1;
@@ -449,7 +447,7 @@ class Eftkads {
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = Map<String, dynamic>();
+    final Map<String, dynamic> data = <String, dynamic>{};
     data['id'] = id;
     data['eftkadDate'] = eftkadDate;
     data['makhdomId'] = makhdomId;
@@ -479,7 +477,7 @@ class EftkadStatuesNavigation {
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = Map<String, dynamic>();
+    final Map<String, dynamic> data = <String, dynamic>{};
     data['id'] = id;
     data['code'] = code;
     data['value'] = value;
@@ -529,7 +527,7 @@ class Users {
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = Map<String, dynamic>();
+    final Map<String, dynamic> data = <String, dynamic>{};
     data['userId'] = userId;
     data['khademId'] = khademId;
     data['userName'] = userName;
@@ -563,7 +561,7 @@ class Level {
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = Map<String, dynamic>();
+    final Map<String, dynamic> data = <String, dynamic>{};
     data['id'] = id;
     data['levelName'] = levelName;
     data['users'] = users;
@@ -592,7 +590,7 @@ class Role {
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = Map<String, dynamic>();
+    final Map<String, dynamic> data = <String, dynamic>{};
     data['id'] = id;
     data['roleName'] = roleName;
     if (rolePermissions != null) {
@@ -624,7 +622,7 @@ class RolePermissions {
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = Map<String, dynamic>();
+    final Map<String, dynamic> data = <String, dynamic>{};
     data['id'] = id;
     data['roleId'] = roleId;
     data['permissionId'] = permissionId;
@@ -652,7 +650,7 @@ class Permission {
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = Map<String, dynamic>();
+    final Map<String, dynamic> data = <String, dynamic>{};
     data['id'] = id;
     data['permissionName'] = permissionName;
     data['permissionCategory'] = permissionCategory;
@@ -684,7 +682,7 @@ class UserPoints {
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = Map<String, dynamic>();
+    final Map<String, dynamic> data = <String, dynamic>{};
     data['id'] = id;
     data['makhdomId'] = makhdomId;
     data['levelId'] = levelId;

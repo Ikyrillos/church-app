@@ -63,7 +63,7 @@ class AddClassAttendanceProvider extends ChangeNotifier {
     return false;
   }
 
-  fillMakhdomsAttendance() {
+  void fillMakhdomsAttendance() {
     makhdomsAttendance = [];
     notifyListeners();
     for (int i = 0; i < items.length; i++) {
@@ -76,7 +76,7 @@ class AddClassAttendanceProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-  rePareListToSend() {
+  void rePareListToSend() {
     for (int i = 0; i < makhdomsAttendance.length; i++) {
       if (makhdomsAttendance[i].value == true) {
         finalList.add(makhdomsAttendance[i].makhdomId);
@@ -86,7 +86,7 @@ class AddClassAttendanceProvider extends ChangeNotifier {
     printDone('Final List $finalList');
   }
 
-  changeSwitchValue(int index, bool newVal) {
+  void changeSwitchValue(int index, bool newVal) {
     makhdomsAttendance[index].value = newVal;
     notifyListeners();
   }
@@ -98,7 +98,7 @@ class AddClassAttendanceProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-  convertToDate() {
+  void convertToDate() {
     DateTime dayToday = DateTime.now();
     String finalFormatedDate =
         intl.DateFormat('yyyy-MM-dd').format(dayToday).toString();
@@ -107,7 +107,7 @@ class AddClassAttendanceProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-  clearSearchController() {
+  void clearSearchController() {
     searchController.text = '';
     notifyListeners();
   }

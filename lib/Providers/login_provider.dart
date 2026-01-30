@@ -64,6 +64,7 @@ class LoginProvider extends ChangeNotifier {
       _customFunctions.hideProgress();
       notifyListeners();
     }
+    return null;
   }
 
   Future<void> _storeUserToken(String? token) async {

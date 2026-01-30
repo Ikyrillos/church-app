@@ -30,7 +30,7 @@ class _MyMakhdomsScreenState extends State<MyMakhdomsScreen> {
     super.initState();
   }
 
-  callMyMakhdomsApi() async {
+  Future<void> callMyMakhdomsApi() async {
     Future.delayed(Duration.zero, () {
       Provider.of<MyMakhdomsProvider>(context, listen: false)
           .myMakhdoms(context)

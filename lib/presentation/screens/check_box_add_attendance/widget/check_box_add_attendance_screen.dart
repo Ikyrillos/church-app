@@ -7,6 +7,8 @@ import '../../../../Providers/check_box_add_attendance_provder.dart';
 import '../../../widgets/app_date_picker_widget.dart';
 
 class CheckBoxAddAttendanceScreen extends StatefulWidget {
+  const CheckBoxAddAttendanceScreen({super.key});
+
   @override
   CheckBoxAddAttendanceScreenState createState() =>
       CheckBoxAddAttendanceScreenState();

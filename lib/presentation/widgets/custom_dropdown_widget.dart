@@ -14,7 +14,7 @@ class CustomDropdownWidget extends StatelessWidget {
   final double? horizontalPadding;
 
   const CustomDropdownWidget(
-      {Key? key,
+      {super.key,
       this.items,
       this.value,
       this.hintText,
@@ -22,8 +22,7 @@ class CustomDropdownWidget extends StatelessWidget {
       this.onChanged,
       this.prefixIcon,
       this.fontSize,
-      this.horizontalPadding})
-      : super(key: key);
+      this.horizontalPadding});
 
   @override
   Widget build(BuildContext context) {
@@ -77,7 +76,7 @@ class CustomDropdownWidget extends StatelessWidget {
                   ),
                 ))
             .toList(),
-        value: value,
+        initialValue: value,
         onChanged: onChanged,
         icon: const Icon(
           Icons.keyboard_arrow_down,

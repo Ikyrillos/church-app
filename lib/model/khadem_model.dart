@@ -1,11 +1,11 @@
 class KhademModel {
   List<Data>? data;
   String? code;
-  Null? errorMsg;
+  Null errorMsg;
   int? count;
   int? pageNo;
   bool? success;
-  Null? listData;
+  Null listData;
 
   KhademModel({data, code, errorMsg, count, pageNo, success, listData});
 
@@ -13,7 +13,7 @@ class KhademModel {
     if (json['data'] != null) {
       data = <Data>[];
       json['data'].forEach((v) {
-        data!.add(new Data.fromJson(v));
+        data!.add(Data.fromJson(v));
       });
     }
     code = json['code'];
@@ -25,11 +25,9 @@ class KhademModel {
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
-    if (data != null) {
-      data['data'] = this.data!.map((v) => v.toJson()).toList();
-    }
-    data['code'] = code;
+    final Map<String, dynamic> data = <String, dynamic>{};
+    data['data'] = this.data!.map((v) => v.toJson()).toList();
+      data['code'] = code;
     data['errorMsg'] = errorMsg;
     data['count'] = count;
     data['pageNo'] = pageNo;
@@ -59,7 +57,7 @@ class Data {
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
+    final Map<String, dynamic> data = <String, dynamic>{};
     data['id'] = id;
     data['name'] = name;
     data['phone1'] = phone1;

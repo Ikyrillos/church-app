@@ -14,8 +14,7 @@ class LocalAttendanceMakhdomWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     // final MyMakhdomsProvider provider =
     //     Provider.of<MyMakhdomsProvider>(context);
-    return makhdomCode != null
-        ? ClipRRect(
+    return ClipRRect(
             borderRadius: BorderRadius.circular(12.0),
             child: Card(
               color: Colors.white,
@@ -47,7 +46,6 @@ class LocalAttendanceMakhdomWidget extends StatelessWidget {
                 ),
               ),
             ),
-          )
-        : Container();
+          );
   }
 }

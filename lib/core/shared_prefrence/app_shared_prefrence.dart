@@ -99,7 +99,7 @@ class AppSharedPreferences {
     }
   }
 
-  static printAllSharedPreferences() async {
+  static Future<void> printAllSharedPreferences() async {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
     final Set<String> keys = prefs.getKeys();
 

@@ -33,7 +33,7 @@ class _MakhdomDetailsScreenState extends State<MakhdomDetailsScreen> {
     super.initState();
   }
 
-  setMakhdomData() {
+  void setMakhdomData() {
     Provider.of<MakhdomDetailsProvider>(context, listen: false)
         .setRecievedMakhdom(widget.makhdom);
   }
@@ -54,9 +54,7 @@ class _MakhdomDetailsScreenState extends State<MakhdomDetailsScreen> {
                 20.0, Colors.black, FontWeight.w500),
           ),
         ),
-        body: makhdomdetailsprovider == null
-            ? Container()
-            : Form(
+        body: Form(
                 key: _formKey,
                 child: SingleChildScrollView(
                     child: Directionality(

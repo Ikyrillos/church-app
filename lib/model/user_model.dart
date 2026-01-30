@@ -28,7 +28,7 @@ class UserModel {
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = Map<String, dynamic>();
+    final Map<String, dynamic> data = <String, dynamic>{};
     if (this.data != null) {
       data['data'] = this.data!.toJson();
     }
@@ -76,13 +76,13 @@ class Data {
     if (json['permissions'] != null) {
       permissions = <Permissions>[];
       json['permissions'].forEach((v) {
-        permissions!.add(new Permissions.fromJson(v));
+        permissions!.add(Permissions.fromJson(v));
       });
     }
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
+    final Map<String, dynamic> data = <String, dynamic>{};
     data['userId'] =  userId;
     data['khademId'] = khademId;
     data['userName'] = userName;
@@ -108,8 +108,8 @@ class Permissions {
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
-    data['permissionName'] = this.permissionName;
+    final Map<String, dynamic> data = <String, dynamic>{};
+    data['permissionName'] = permissionName;
     return data;
   }
 }

@@ -9,7 +9,7 @@ import 'package:provider/provider.dart';
 import '../../core/utils/app_debug_prints.dart';
 
 class ArrangeSectionWidget extends StatelessWidget {
-  const ArrangeSectionWidget({Key? key}) : super(key: key);
+  const ArrangeSectionWidget({super.key});
 
   @override
   Widget build(BuildContext context) {

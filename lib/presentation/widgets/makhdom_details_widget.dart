@@ -9,8 +9,8 @@ class MakhdomDetailsWidget extends StatelessWidget {
   final int type; // 1 textbox(string),2 textbox(int),3 datepicker,4 multiline
   final bool isRequired;
 
-  MakhdomDetailsWidget(
-      this.title, this.value, this.handleChange, this.type, this.isRequired);
+  const MakhdomDetailsWidget(
+      this.title, this.value, this.handleChange, this.type, this.isRequired, {super.key});
 
   TextInputType getKeyboardType() {
     switch (type) {

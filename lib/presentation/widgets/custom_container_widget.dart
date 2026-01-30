@@ -12,14 +12,13 @@ class CustomContainerWidget extends StatelessWidget {
   final double? bottomMargin;
 
   const CustomContainerWidget(
-      {Key? key,
+      {super.key,
       this.height,
       required this.child,
       required this.headline,
       this.bgColor,
       this.isImage = false,
-      this.bottomMargin})
-      : super(key: key);
+      this.bottomMargin});
 
   @override
   Widget build(BuildContext context) {

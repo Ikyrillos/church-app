@@ -6,7 +6,7 @@ import 'package:abosiefienapp/repositories/add_class_attendance_repo.dart';
 import 'package:dartz/dartz.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter_barcode_scanner/flutter_barcode_scanner.dart';
+import 'package:flutter_barcode_scanner_plus/flutter_barcode_scanner_plus.dart';
 import 'package:intl/intl.dart' as intl;
 import 'package:path/path.dart';
 import 'package:shared_preferences/shared_preferences.dart';

@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 
 class ToastM {
-  static show(String message) {
+  static void show(String message) {
     Fluttertoast.showToast(
       msg: message,
       backgroundColor: Colors.grey[700],
@@ -10,7 +10,7 @@ class ToastM {
     );
   }
 
-  static showTryCatchMessage({BuildContext? context}) {
+  static void showTryCatchMessage({BuildContext? context}) {
     Fluttertoast.showToast(
       msg: 'try catch',
       timeInSecForIosWeb: 5,

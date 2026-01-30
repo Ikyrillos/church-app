@@ -6,8 +6,8 @@ import '../../../../core/theming/app_styles_util.dart';
 
 class AuthCard extends StatefulWidget {
   const AuthCard({
-    Key? key,
-  }) : super(key: key);
+    super.key,
+  });
 
   @override
   _AuthCardState createState() => _AuthCardState();
@@ -62,6 +62,7 @@ class _AuthCardState extends State<AuthCard> {
                       if (value!.isEmpty) {
                         return 'كلمة السر خطأ';
                       }
+                      return null;
                     },
                   ),
                   const SizedBox(

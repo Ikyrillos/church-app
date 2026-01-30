@@ -27,7 +27,7 @@ class InputFieldWidget extends StatelessWidget {
   bool? isDisable = true;
 
   InputFieldWidget({
-    Key? key,
+    super.key,
     required this.obscure,
     this.height,
     required this.width,
@@ -49,7 +49,7 @@ class InputFieldWidget extends StatelessWidget {
     this.prefix,
     this.disable,
     this.isDisable,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -75,9 +75,7 @@ class InputFieldWidget extends StatelessWidget {
           //textDirection: TextDirection.rtl,
           obscureText: obscure,
           keyboardType: keyboardType,
-          style: style != null
-              ? style
-              : AppStylesUtil.textRegularStyle(
+          style: style ?? AppStylesUtil.textRegularStyle(
                   16, Colors.black, FontWeight.normal),
           validator: (value) {
             if (validation == false && validation != null) {

@@ -27,7 +27,7 @@ class _AddMakhdomScreenState extends State<AddMakhdomScreen> {
     super.initState();
   }
 
-  callGetKhademApi() async {
+  Future<void> callGetKhademApi() async {
     Future.delayed(Duration.zero, () {
       Provider.of<AddMakhdomProvider>(context, listen: false)
           .getkhadem(context)

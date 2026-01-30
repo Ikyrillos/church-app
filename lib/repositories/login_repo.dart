@@ -21,7 +21,7 @@ class LoginRepo extends Repository {
           query: {"userName": email, "password": password},
         );
         if (response['success'] == true) {
-          printWarning('token is ${response}');
+          printWarning('token is $response');
           final userdata = UserModel.fromJson(response);
 
           await AppSharedPreferences.setString(

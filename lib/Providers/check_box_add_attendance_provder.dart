@@ -66,7 +66,7 @@ class CheckBoxAddAttendanceProvider with ChangeNotifier {
   Future<void> loadCheckboxStates() async {
     _checkboxStates = {};
     for (String id in _ids.map((id) => id.toString())) {
-      bool? state = await AppSharedPreferences.getBool(id);
+      bool? state = AppSharedPreferences.getBool(id);
       _checkboxStates[id] = state ?? false;
     }
     notifyListeners();
@@ -195,10 +195,10 @@ class CheckBoxAddAttendanceProvider with ChangeNotifier {
     } else {
       print('Data from SQLite:');
       List<String> namesList = [];
-      maps.forEach((map) {
+      for (var map in maps) {
         namesList.add(map['name']);
         print(map);
-      });
+      }
       _names = namesList;
       notifyListeners();
     }
@@ -223,7 +223,7 @@ class CheckBoxAddAttendanceProvider with ChangeNotifier {
     notifyListeners();
   }
 
-  convertToDate() {
+  void convertToDate() {
     DateTime dayToday = DateTime.now();
     String finalFormattedDate =
         intl.DateFormat('yyyy-MM-dd').format(dayToday).toString();

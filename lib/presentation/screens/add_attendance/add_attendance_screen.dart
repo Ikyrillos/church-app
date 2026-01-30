@@ -44,7 +44,7 @@ class AddAttendanceScreen extends StatelessWidget {
                     style: AppStylesUtil.textRegularStyle(
                         18.sp, Colors.white, FontWeight.w500)),
                 onPressed: () async {
-                  if (provider.localAttendanceMakhdoms.length != 0) {
+                  if (provider.localAttendanceMakhdoms.isNotEmpty) {
                     bool success = await provider.addAttendance(context);
                     if (success) {
                       provider.removeAllList(); // Clear cache on success

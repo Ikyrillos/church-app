@@ -18,10 +18,8 @@ class UpdateMakhdomRepo extends Repository {
           Endpoints.REQUEST_UPDATE_MAKHDOM,
           data.toJson(),
         );
-        if (response != null) {
-          return MakhdomUpdateModel.fromJson(response['data']);
-        }
-        throw ServerException(exceptionMessage: response['msg']);
+        return MakhdomUpdateModel.fromJson(response['data']);
+              throw ServerException(exceptionMessage: response['msg']);
       },
     );
   }

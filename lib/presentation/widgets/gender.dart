@@ -17,7 +17,7 @@ class GenderSelect extends StatefulWidget {
   dynamic onChanged;
 
   GenderSelect(
-      {required this.radioValue,
+      {super.key, required this.radioValue,
       required this.title1,
       required this.title2,
       required this.title3,
@@ -32,8 +32,8 @@ class GenderSelect extends StatefulWidget {
 class _GenderSelectState extends State<GenderSelect> {
   @override
   Widget build(BuildContext context) {
-    int _value = widget.radioValue.value;
-    printWarning('_value $_value');
+    int value = widget.radioValue.value;
+    printWarning('_value $value');
     return Directionality(
       textDirection: TextDirection.rtl,
       child: Column(
@@ -63,13 +63,13 @@ class _GenderSelectState extends State<GenderSelect> {
                     children: [
                       Radio(
                         value: 1,
-                        groupValue: _value,
+                        groupValue: value,
                         fillColor: widget.checkedIncome == true
-                            ? MaterialStateProperty.all(Colors.blue)
-                            : MaterialStateProperty.all(Colors.grey),
+                            ? WidgetStateProperty.all(Colors.blue)
+                            : WidgetStateProperty.all(Colors.grey),
                         onChanged: (dynamic value) {
                           setState(() {
-                            _value = value;
+                            value = value;
                             widget.radioValue.value = value;
                             widget.onChanged(value);
                           });
@@ -90,14 +90,14 @@ class _GenderSelectState extends State<GenderSelect> {
                     children: [
                       Radio(
                           value: 2,
-                          groupValue: _value,
+                          groupValue: value,
                           fillColor: widget.checkedIncome == true
-                              ? MaterialStateProperty.all(Colors.blue)
-                              : MaterialStateProperty.all(
+                              ? WidgetStateProperty.all(Colors.blue)
+                              : WidgetStateProperty.all(
                                   const Color(0xffEDEDED)),
                           onChanged: (dynamic value) {
                             setState(() {
-                              _value = value;
+                              value = value;
                               widget.radioValue.value = value;
                               widget.onChanged(value);
                             });

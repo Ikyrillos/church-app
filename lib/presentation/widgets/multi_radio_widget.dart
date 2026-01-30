@@ -18,7 +18,7 @@ class MultiRadioWidget extends StatefulWidget {
   dynamic onChanged;
 
   MultiRadioWidget(
-      {required this.radioValue,
+      {super.key, required this.radioValue,
       required this.title1,
       required this.title2,
       required this.title3,
@@ -35,8 +35,8 @@ class MultiRadioWidget extends StatefulWidget {
 class _MultiRadioWidgetState extends State<MultiRadioWidget> {
   @override
   Widget build(BuildContext context) {
-    int _value = widget.radioValue.value;
-    printWarning('_value $_value');
+    int value = widget.radioValue.value;
+    printWarning('_value $value');
     return Directionality(
       textDirection: TextDirection.rtl,
       child: Column(
@@ -64,10 +64,10 @@ class _MultiRadioWidgetState extends State<MultiRadioWidget> {
                     children: [
                       Radio(
                           value: 1,
-                          groupValue: _value,
-                          fillColor: MaterialStateProperty.all(Colors.blue),
+                          groupValue: value,
+                          fillColor: WidgetStateProperty.all(Colors.blue),
                           onChanged: (dynamic value) {
-                            _value = value;
+                            value = value;
                             widget.radioValue.value = value;
                             widget.onChanged(value);
                           }),
@@ -85,10 +85,10 @@ class _MultiRadioWidgetState extends State<MultiRadioWidget> {
                     children: [
                       Radio(
                           value: 2,
-                          groupValue: _value,
-                          fillColor: MaterialStateProperty.all(Colors.blue),
+                          groupValue: value,
+                          fillColor: WidgetStateProperty.all(Colors.blue),
                           onChanged: (dynamic value) {
-                            _value = value;
+                            value = value;
                             widget.radioValue.value = value;
                             widget.onChanged(value);
                           }),
@@ -106,10 +106,10 @@ class _MultiRadioWidgetState extends State<MultiRadioWidget> {
                     children: [
                       Radio(
                           value: 3,
-                          groupValue: _value,
-                          fillColor: MaterialStateProperty.all(Colors.blue),
+                          groupValue: value,
+                          fillColor: WidgetStateProperty.all(Colors.blue),
                           onChanged: (dynamic value) {
-                            _value = value;
+                            value = value;
                             widget.radioValue.value = value;
                             widget.onChanged(value);
                           }),
