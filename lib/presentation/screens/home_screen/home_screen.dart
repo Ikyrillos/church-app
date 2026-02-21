@@ -3,33 +3,33 @@ import 'package:abosiefienapp/core/extension_method/extension_navigation.dart';
 import 'package:abosiefienapp/presentation/widgets/card_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:provider/provider.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../core/route/app_routes.dart';
 import '../../../core/shared_prefrence/app_shared_prefrence.dart';
 import '../../../core/theming/app_styles_util.dart';
 
-class HomeScreen extends StatefulWidget {
+class HomeScreen extends ConsumerStatefulWidget {
   const HomeScreen({super.key});
 
   @override
-  State<HomeScreen> createState() => _HomeScreenState();
+  ConsumerState<HomeScreen> createState() => _HomeScreenState();
 }
 
-class _HomeScreenState extends State<HomeScreen> {
+class _HomeScreenState extends ConsumerState<HomeScreen> {
   @override
   void initState() {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
-      Provider.of<HomeScreenProvider>(context, listen: false)
-          .getStoredUser(context);
+      ref.read(homeScreenProvider.notifier).getStoredUser(context);
     });
   }
 
   @override
   Widget build(BuildContext context) {
-    return Consumer<HomeScreenProvider>(
-      builder: (context, homescreenprovider, child) {
+    return Consumer(
+      builder: (context, ref, child) {
+        final homescreenprovider = ref.watch(homeScreenProvider);
         return WillPopScope(
           onWillPop: () async {
             SystemChannels.platform.invokeMethod('SystemNavigator.pop');
@@ -78,8 +78,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   ),
                 ),
                 Visibility(
-                  visible:
-                    homescreenprovider.hasManageMakhdomsPermission,
+                  visible: homescreenprovider.hasManageMakhdomsPermission,
                   child: CardWidget(
                     "إدارة المخدومين",
                     () {

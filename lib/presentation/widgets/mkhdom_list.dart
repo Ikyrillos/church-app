@@ -2,7 +2,7 @@ import 'package:abosiefienapp/Providers/my_makhdoms_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:provider/provider.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../core/app_assets/app_assets_util.dart';
 import '../../core/route/app_routes.dart';
@@ -11,19 +11,19 @@ import '../../core/utils/app_debug_prints.dart';
 import '../../model/mymakhdoms_model.dart';
 
 // ignore: must_be_immutable
-class MakdomList extends StatelessWidget {
+class MakdomList extends ConsumerWidget {
   final Data makhdom;
   final IconData actionIcon;
   final void Function()? handlePress;
   final bool addAttendance;
 
   const MakdomList(
-      this.makhdom, this.actionIcon, this.handlePress, this.addAttendance, {super.key});
+      this.makhdom, this.actionIcon, this.handlePress, this.addAttendance,
+      {super.key});
 
   @override
-  Widget build(BuildContext context) {
-    final MyMakhdomsProvider provider =
-        Provider.of<MyMakhdomsProvider>(context);
+  Widget build(BuildContext context, WidgetRef ref) {
+    final provider = ref.watch(myMakhdomsProvider.notifier);
     return makhdom.name != null
         ? ClipRRect(
             borderRadius: BorderRadius.circular(24.0),

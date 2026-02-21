@@ -18,7 +18,7 @@ class MyMakhdomsRepo extends Repository {
       () async {
         printWarning('Iam In HistoryOfMakhdoms Repo');
         final Map<String, dynamic> response = await dioHelper
-            .getDataWithQuery(endPont: Endpoints.REQUEST_MY_MAKHDOMS, query: {
+            .getDataWithQuery(endPont: Endpoints.requestMyMakhdoms, query: {
           "sortCoulmn": sortColumn,
           "sortDirection": sortDirection,
           "absentDate": formattedDate,
@@ -37,7 +37,7 @@ class MyMakhdomsRepo extends Repository {
         printWarning('Iam In HistoryOfMakhdoms Repo');
 
         final Map<String, dynamic> response = await dioHelper.putData(
-          Endpoints.REQUEST_UPDATE_MAKHDOM,
+          Endpoints.requestUpdateMakhdom,
           {
             "id": data.id,
             "name": data.name,

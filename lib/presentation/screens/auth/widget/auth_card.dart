@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../../Providers/login_provider.dart';
 import '../../../../core/theming/app_styles_util.dart';
 
-class AuthCard extends StatefulWidget {
+class AuthCard extends ConsumerStatefulWidget {
   const AuthCard({
     super.key,
   });
@@ -13,7 +13,7 @@ class AuthCard extends StatefulWidget {
   _AuthCardState createState() => _AuthCardState();
 }
 
-class _AuthCardState extends State<AuthCard> {
+class _AuthCardState extends ConsumerState<AuthCard> {
   final GlobalKey<FormState> _formKey = GlobalKey();
   TextEditingController usernameController = TextEditingController();
   TextEditingController passwordController = TextEditingController();
@@ -81,9 +81,10 @@ class _AuthCardState extends State<AuthCard> {
                     ),
                     onPressed: () async {
                       if (_formKey.currentState!.validate()) {
-                        await Provider.of<LoginProvider>(context, listen: false)
-                            .login(usernameController.text,
-                                passwordController.text, context);
+                        await ref.read(loginProvider.notifier).login(
+                            usernameController.text,
+                            passwordController.text,
+                            context);
                       }
                     },
                     child: Text(

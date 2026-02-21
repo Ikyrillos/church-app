@@ -19,7 +19,7 @@ class MyHttpOverrides extends HttpOverrides {
 class DioHelper {
   static late Dio dio;
 
-  static String api = Endpoints.BASE_URL;
+  static String api = Endpoints.baseUrl;
 
   static void initialize() {
     dio = Dio(
@@ -214,6 +214,7 @@ class DioHelper {
       options: Options(
         headers: <String, dynamic>{
           'Authorization': ' $token',
+          'accept': 'text/plain',
         },
       ),
     );

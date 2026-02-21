@@ -6,19 +6,19 @@ import 'package:abosiefienapp/presentation/widgets/gender.dart';
 import 'package:abosiefienapp/presentation/widgets/input_form_fields.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:provider/provider.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../core/theming/app_styles_util.dart';
 import '../../../core/utils/app_debug_prints.dart';
 
-class AddMakhdomScreen extends StatefulWidget {
+class AddMakhdomScreen extends ConsumerStatefulWidget {
   const AddMakhdomScreen({super.key});
 
   @override
   _AddMakhdomScreenState createState() => _AddMakhdomScreenState();
 }
 
-class _AddMakhdomScreenState extends State<AddMakhdomScreen> {
+class _AddMakhdomScreenState extends ConsumerState<AddMakhdomScreen> {
   FocusNode focusNode = FocusNode();
 
   @override
@@ -29,9 +29,7 @@ class _AddMakhdomScreenState extends State<AddMakhdomScreen> {
 
   Future<void> callGetKhademApi() async {
     Future.delayed(Duration.zero, () {
-      Provider.of<AddMakhdomProvider>(context, listen: false)
-          .getkhadem(context)
-          .then((value) {
+      ref.read(addMakhdomProvider.notifier).getkhadem(context).then((value) {
         printDone('Done $value');
       });
     });
@@ -39,8 +37,9 @@ class _AddMakhdomScreenState extends State<AddMakhdomScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Consumer<AddMakhdomProvider>(
-        builder: (context, addMakhdomProvider, child) {
+    return Consumer(builder: (context, ref, child) {
+      final state = ref.watch(addMakhdomProvider);
+      final addMakhdomProviderVar = ref.read(addMakhdomProvider.notifier);
       return Scaffold(
         appBar: AppBar(
           title: Text(
@@ -50,7 +49,7 @@ class _AddMakhdomScreenState extends State<AddMakhdomScreen> {
           ),
         ),
         body: Form(
-          key: addMakhdomProvider.formKey,
+          key: addMakhdomProviderVar.formKey,
           child: SingleChildScrollView(
               child: Directionality(
             textDirection: TextDirection.rtl,
@@ -64,12 +63,12 @@ class _AddMakhdomScreenState extends State<AddMakhdomScreen> {
                     width: MediaQuery.of(context).size.width - 40,
                     child: CustomDropdownWidget(
                       labelText: 'اختر الخادم',
-                      items: addMakhdomProvider.dropdownList,
-                      value: addMakhdomProvider.selectedKhadem,
+                      items: state.dropdownList,
+                      value: state.selectedKhadem,
                       onChanged: (val) {
-                        addMakhdomProvider.setSelectedKhadem(val ?? 2);
+                        addMakhdomProviderVar.setSelectedKhadem(val ?? 2);
                         printDone(
-                            'Selected Khadem updated ${addMakhdomProvider.selectedKhadem}');
+                            'Selected Khadem updated ${state.selectedKhadem}');
                       },
                     ),
                   ),
@@ -79,9 +78,10 @@ class _AddMakhdomScreenState extends State<AddMakhdomScreen> {
                   InputFieldWidget(
                     labeltext: 'الإسم',
                     width: MediaQuery.of(context).size.width - 40,
-                    controller: addMakhdomProvider.nameController,
+                    controller: addMakhdomProviderVar.nameController,
                     keyboardType: TextInputType.text,
-                    validation: addMakhdomProvider.nameController.isValidName(),
+                    validation:
+                        addMakhdomProviderVar.nameController.isValidName(),
                     validationText: 'يجب إدخال الإسم',
                     lines: 1,
                     obscure: false,
@@ -94,10 +94,10 @@ class _AddMakhdomScreenState extends State<AddMakhdomScreen> {
                   InputFieldWidget(
                       labeltext: 'التليفون',
                       width: MediaQuery.of(context).size.width - 40,
-                      controller: addMakhdomProvider.phoneController,
+                      controller: addMakhdomProviderVar.phoneController,
                       keyboardType: TextInputType.number,
                       validation:
-                          addMakhdomProvider.phoneController.isValidPhone(),
+                          addMakhdomProviderVar.phoneController.isValidPhone(),
                       validationText: 'يجب إدخال رقم تليفون صحيح',
                       lines: 1,
                       obscure: false,
@@ -109,10 +109,10 @@ class _AddMakhdomScreenState extends State<AddMakhdomScreen> {
                   InputFieldWidget(
                       labeltext: 'رقم تليفون اّخر',
                       width: MediaQuery.of(context).size.width - 40,
-                      controller: addMakhdomProvider.phone2Controller,
+                      controller: addMakhdomProviderVar.phone2Controller,
                       keyboardType: TextInputType.number,
                       // validation:
-                      //     addMakhdomProvider.phone2Controller.isValidPhone(),
+                      //     addMakhdomProviderVar.phone2Controller.isValidPhone(),
                       // validationText: 'يجب إدخال رقم تليفون صحيح',
                       lines: 1,
                       obscure: false,
@@ -123,7 +123,7 @@ class _AddMakhdomScreenState extends State<AddMakhdomScreen> {
                       }),
                   GenderSelect(
                       checkedIncome: true,
-                      radioValue: addMakhdomProvider.genderValue,
+                      radioValue: addMakhdomProviderVar.genderValue,
                       title1: 'النوع',
                       title2: 'ذكر',
                       title3: 'انثى',
@@ -140,7 +140,7 @@ class _AddMakhdomScreenState extends State<AddMakhdomScreen> {
                       lines: 1,
                       obscure: false,
                       textAlign: TextAlign.start,
-                      controller: addMakhdomProvider.addressNumberController,
+                      controller: addMakhdomProviderVar.addressNumberController,
                       onChanged: (value) {
                         // makhdomdetailsprovider.recievedMakhdom!.addNo =
                         //     int.parse(value) ?? 0;
@@ -153,7 +153,7 @@ class _AddMakhdomScreenState extends State<AddMakhdomScreen> {
                       lines: 1,
                       obscure: false,
                       textAlign: TextAlign.start,
-                      controller: addMakhdomProvider.addressStreetController,
+                      controller: addMakhdomProviderVar.addressStreetController,
                       onChanged: (value) {
                         // makhdomdetailsprovider.recievedMakhdom!.addStreet =
                         //     value ?? '';
@@ -166,7 +166,7 @@ class _AddMakhdomScreenState extends State<AddMakhdomScreen> {
                       lines: 1,
                       obscure: false,
                       textAlign: TextAlign.start,
-                      controller: addMakhdomProvider.addressBesideController,
+                      controller: addMakhdomProviderVar.addressBesideController,
                       onChanged: (value) {
                         // makhdomdetailsprovider.recievedMakhdom!.addBeside =
                         //     value ?? '';
@@ -202,13 +202,13 @@ class _AddMakhdomScreenState extends State<AddMakhdomScreen> {
                       onTap: () async {
                         DateTime? selected =
                             await customShowDatePicker(context);
-                        addMakhdomProvider.changeBirthdate(selected);
+                        addMakhdomProviderVar.changeBirthdate(selected);
                       },
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
                           Text(
-                            addMakhdomProvider.birthdate ?? '',
+                            state.birthdate ?? '',
                             style: AppStylesUtil.textBoldStyle(
                               16.sp,
                               Colors.black,
@@ -228,8 +228,9 @@ class _AddMakhdomScreenState extends State<AddMakhdomScreen> {
                   InputFieldWidget(
                       labeltext: 'أب الإعتراف',
                       width: MediaQuery.of(context).size.width - 40,
-                      controller: addMakhdomProvider.fatherController,
-                      validation: addMakhdomProvider.fatherController.isEmpty(),
+                      controller: addMakhdomProviderVar.fatherController,
+                      validation:
+                          addMakhdomProviderVar.fatherController.isEmpty(),
                       keyboardType: TextInputType.text,
                       lines: 1,
                       obscure: false,
@@ -242,9 +243,9 @@ class _AddMakhdomScreenState extends State<AddMakhdomScreen> {
                   InputFieldWidget(
                       labeltext: 'الجامعة',
                       width: MediaQuery.of(context).size.width - 40,
-                      controller: addMakhdomProvider.universityController,
+                      controller: addMakhdomProviderVar.universityController,
                       // validation:
-                      //     addMakhdomProvider.universityController.isEmpty(),
+                      //     addMakhdomProviderVar.universityController.isEmpty(),
                       keyboardType: TextInputType.text,
                       lines: 1,
                       obscure: false,
@@ -257,9 +258,9 @@ class _AddMakhdomScreenState extends State<AddMakhdomScreen> {
                   InputFieldWidget(
                       labeltext: 'الكلية',
                       width: MediaQuery.of(context).size.width - 40,
-                      controller: addMakhdomProvider.facultyController,
+                      controller: addMakhdomProviderVar.facultyController,
                       // validation:
-                      //     addMakhdomProvider.facultyController.isEmpty(),
+                      //     addMakhdomProviderVar.facultyController.isEmpty(),
                       keyboardType: TextInputType.text,
                       lines: 1,
                       obscure: false,
@@ -272,8 +273,8 @@ class _AddMakhdomScreenState extends State<AddMakhdomScreen> {
                   InputFieldWidget(
                       labeltext: 'السنة الدراسية',
                       width: MediaQuery.of(context).size.width - 40,
-                      controller: addMakhdomProvider.studentYearController,
-                      //validation: addMakhdomProvider.levelController.isEmpty(),
+                      controller: addMakhdomProviderVar.studentYearController,
+                      //validation: addMakhdomProviderVar.levelController.isEmpty(),
                       keyboardType: TextInputType.number,
                       lines: 1,
                       obscure: false,
@@ -286,8 +287,8 @@ class _AddMakhdomScreenState extends State<AddMakhdomScreen> {
                   InputFieldWidget(
                       labeltext: 'الملاحظات',
                       width: MediaQuery.of(context).size.width - 40,
-                      controller: addMakhdomProvider.notesController,
-                      //validation: addMakhdomProvider.notesController.isEmpty(),
+                      controller: addMakhdomProviderVar.notesController,
+                      //validation: addMakhdomProviderVar.notesController.isEmpty(),
                       keyboardType: TextInputType.text,
                       lines: 4,
                       obscure: false,
@@ -315,22 +316,24 @@ class _AddMakhdomScreenState extends State<AddMakhdomScreen> {
                         style: AppStylesUtil.textBoldStyle(
                             18, Colors.white, FontWeight.bold)),
                     onPressed: () {
-                      printDone(addMakhdomProvider.nameController.text);
-                      printDone(addMakhdomProvider.phoneController.text);
-                      printDone(addMakhdomProvider.phone2Controller.text);
-                      printDone(addMakhdomProvider.genderValue.value);
+                      printDone(addMakhdomProviderVar.nameController.text);
+                      printDone(addMakhdomProviderVar.phoneController.text);
+                      printDone(addMakhdomProviderVar.phone2Controller.text);
+                      printDone(addMakhdomProviderVar.genderValue.value);
                       printDone(
-                          addMakhdomProvider.addressNumberController.text);
+                          addMakhdomProviderVar.addressNumberController.text);
                       printDone(
-                          addMakhdomProvider.addressStreetController.text);
+                          addMakhdomProviderVar.addressStreetController.text);
                       printDone(
-                          addMakhdomProvider.addressBesideController.text);
-                      printDone(addMakhdomProvider.facultyController.text);
-                      printDone(addMakhdomProvider.universityController.text);
-                      printDone(addMakhdomProvider.facultyController.text);
-                      printDone(addMakhdomProvider.studentYearController.text);
-                      printDone(addMakhdomProvider.notesController.text);
-                      addMakhdomProvider.validate(context);
+                          addMakhdomProviderVar.addressBesideController.text);
+                      printDone(addMakhdomProviderVar.facultyController.text);
+                      printDone(
+                          addMakhdomProviderVar.universityController.text);
+                      printDone(addMakhdomProviderVar.facultyController.text);
+                      printDone(
+                          addMakhdomProviderVar.studentYearController.text);
+                      printDone(addMakhdomProviderVar.notesController.text);
+                      addMakhdomProviderVar.validate(context);
                     },
                   ),
                 ],

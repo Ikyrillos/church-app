@@ -17,7 +17,7 @@ class LoginRepo extends Repository {
       () async {
         printWarning('Iam In Login Repo');
         final Map<String, dynamic> response = await dioHelper.getDataWithQuery(
-          endPont: Endpoints.REQUEST_LOGIN,
+          endPont: Endpoints.requestLogin,
           query: {"userName": email, "password": password},
         );
         if (response['success'] == true) {

@@ -79,8 +79,11 @@ class _AddClassAttendanceScreenState extends State<AddClassAttendanceScreen> {
                   child: Column(
                     children: [
                       SearchSectionWidget(
-                        attendanceProvider: addclassattendanceprovider,
+                        controller: addclassattendanceprovider.searchController,
                         filtervisibility: false,
+                        onChanged: (value) {
+                          addclassattendanceprovider.filterSearchResults(value);
+                        },
                         searchonTap: () {
                           addclassattendanceprovider.filterSearchResults(
                               addclassattendanceprovider.searchController.text);
@@ -94,8 +97,7 @@ class _AddClassAttendanceScreenState extends State<AddClassAttendanceScreen> {
                             itemBuilder: (ctx, index) {
                               return ListTile(
                                 title: Text(
-                                  '${index + 1} -   ${addclassattendanceprovider
-                                              .items[index].name}' ??
+                                  '${index + 1} -   ${addclassattendanceprovider.items[index].name}' ??
                                       '',
                                   textAlign: TextAlign.start,
                                   overflow: TextOverflow.ellipsis,

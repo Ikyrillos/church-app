@@ -13,7 +13,7 @@ class AddClassAttendanceRepo extends Repository {
       () async {
         printWarning('Iam In AddAttendance Repo');
         final Map<String, dynamic> response = await dioHelper.getDataWithQuery(
-            endPont: Endpoints.REQUEST_ADD_ATTENDANCE, query: body!);
+            endPont: Endpoints.requestAddAttendance, query: body!);
         if (response['success'] == true) {
           return response;
         }

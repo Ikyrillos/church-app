@@ -6,47 +6,67 @@ import 'package:abosiefienapp/repositories/login_repo.dart';
 import 'package:dartz/dartz.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:package_info_plus/package_info_plus.dart';
+import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 import '../core/route/app_routes.dart';
 import '../core/shared_prefrence/app_shared_prefrence.dart';
 import '../core/utils/app_debug_prints.dart';
 
-class LoginProvider extends ChangeNotifier {
-  final LoginRepo _loginRepo = LoginRepo();
-  final CustomFunctions _customFunctions = CustomFunctions();
-  String version = '';
+part 'login_provider.g.dart';
 
-  UserModel? _user;
+class LoginState {
+  final UserModel? user;
+  final String version;
 
-  void setUser(UserModel user) {
-    _user = user;
-    notifyListeners();
+  LoginState({this.user, this.version = ''});
+
+  LoginState copyWith({
+    UserModel? user,
+    String? version,
+  }) {
+    return LoginState(
+      user: user ?? this.user,
+      version: version ?? this.version,
+    );
+  }
+}
+
+@Riverpod(keepAlive: true)
+class LoginNotifier extends _$LoginNotifier {
+  LoginRepo loginRepo = LoginRepo();
+  CustomFunctions customFunctions = CustomFunctions();
+
+  @override
+  LoginState build() {
+    return LoginState();
   }
 
-  UserModel? get user => _user;
+  void setUser(UserModel user) {
+    state = state.copyWith(user: user);
+  }
+
+  UserModel? get user => state.user;
 
   Future<bool?> login(
       String username, String password, BuildContext context) async {
     try {
       printWarning('username $username');
       printWarning('password $password');
-      _customFunctions.showProgress(context);
+      customFunctions.showProgress(context);
 
       final Either<Failure, UserModel?> response =
-          await _loginRepo.requestLogin(username, password);
-      notifyListeners();
+          await loginRepo.requestLogin(username, password);
 
       response.fold(
         (Failure failure) {
           printError(failure.message);
-          _customFunctions.showError(
-              message: failure.message, context: context);
+          customFunctions.showError(message: failure.message, context: context);
           return false;
         },
         (UserModel? user) {
           if (user != null) {
             _storeUserToken(user.data?.token);
-            _customFunctions.hideProgress();
+            customFunctions.hideProgress();
             context.pushNamedAndRemoveUntil(
               AppRoutes.homeRouteName,
               predicate: (route) => false,
@@ -54,15 +74,14 @@ class LoginProvider extends ChangeNotifier {
             return true;
           } else {
             printError('Login failed: UserModel is null');
-            _customFunctions.showError(
+            customFunctions.showError(
                 message: 'Login failed. Please try again.', context: context);
             return false;
           }
         },
       );
     } finally {
-      _customFunctions.hideProgress();
-      notifyListeners();
+      customFunctions.hideProgress();
     }
     return null;
   }
@@ -82,8 +101,7 @@ class LoginProvider extends ChangeNotifier {
 
   Future<void> getAPKVersion() async {
     PackageInfo packageInfo = await PackageInfo.fromPlatform();
-    version = packageInfo.version;
-    printWarning('version $version');
-    notifyListeners();
+    state = state.copyWith(version: packageInfo.version);
+    printWarning('version ${state.version}');
   }
 }

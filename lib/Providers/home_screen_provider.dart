@@ -1,20 +1,69 @@
 import 'dart:convert';
-
 import 'package:abosiefienapp/model/user_model.dart';
 import 'package:flutter/material.dart';
+import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 import '../core/shared_prefrence/app_shared_prefrence.dart';
 import '../core/utils/app_debug_prints.dart';
 
-class HomeScreenProvider extends ChangeNotifier {
-  UserModel? user;
-  List<String> permisions = [];
-  bool hasGetMakhdomsPermission = false;
-  bool hasManageMakhdomsPermission = false;
-  bool hasaddclassattendancePermission = false;
-  bool hasaaddattendancePermission = false;
-  bool hasaaddMakhdomPermission = false;
-  bool hasUpdateMakhdomsPermission = false;
+part 'home_screen_provider.g.dart';
+
+class HomeScreenState {
+  final UserModel? user;
+  final List<String> permisions;
+  final bool hasGetMakhdomsPermission;
+  final bool hasManageMakhdomsPermission;
+  final bool hasaddclassattendancePermission;
+  final bool hasaaddattendancePermission;
+  final bool hasaaddMakhdomPermission;
+  final bool hasUpdateMakhdomsPermission;
+
+  HomeScreenState({
+    this.user,
+    this.permisions = const [],
+    this.hasGetMakhdomsPermission = false,
+    this.hasManageMakhdomsPermission = false,
+    this.hasaddclassattendancePermission = false,
+    this.hasaaddattendancePermission = false,
+    this.hasaaddMakhdomPermission = false,
+    this.hasUpdateMakhdomsPermission = false,
+  });
+
+  HomeScreenState copyWith({
+    UserModel? user,
+    List<String>? permisions,
+    bool? hasGetMakhdomsPermission,
+    bool? hasManageMakhdomsPermission,
+    bool? hasaddclassattendancePermission,
+    bool? hasaaddattendancePermission,
+    bool? hasaaddMakhdomPermission,
+    bool? hasUpdateMakhdomsPermission,
+  }) {
+    return HomeScreenState(
+      user: user ?? this.user,
+      permisions: permisions ?? this.permisions,
+      hasGetMakhdomsPermission:
+          hasGetMakhdomsPermission ?? this.hasGetMakhdomsPermission,
+      hasManageMakhdomsPermission:
+          hasManageMakhdomsPermission ?? this.hasManageMakhdomsPermission,
+      hasaddclassattendancePermission: hasaddclassattendancePermission ??
+          this.hasaddclassattendancePermission,
+      hasaaddattendancePermission:
+          hasaaddattendancePermission ?? this.hasaaddattendancePermission,
+      hasaaddMakhdomPermission:
+          hasaaddMakhdomPermission ?? this.hasaaddMakhdomPermission,
+      hasUpdateMakhdomsPermission:
+          hasUpdateMakhdomsPermission ?? this.hasUpdateMakhdomsPermission,
+    );
+  }
+}
+
+@Riverpod(keepAlive: true)
+class HomeScreenNotifier extends _$HomeScreenNotifier {
+  @override
+  HomeScreenState build() {
+    return HomeScreenState();
+  }
 
   void getStoredUser(BuildContext context) async {
     final userJson =
@@ -25,15 +74,13 @@ class HomeScreenProvider extends ChangeNotifier {
         final userMap = jsonDecode(userJson);
 
         if (userMap is Map<String, dynamic>) {
-          user = UserModel.fromJson(userMap);
-          print('user data for ${user?.data?.levelId}');
+          state = state.copyWith(user: UserModel.fromJson(userMap));
+          print('user data for ${state.user?.data?.levelId}');
 
           getPermisions();
         } else {
           printError('Retrieved data is not a valid JSON object.');
         }
-
-        notifyListeners();
       } catch (e) {
         printError('Failed to parse user data: $e');
       }
@@ -43,29 +90,48 @@ class HomeScreenProvider extends ChangeNotifier {
   }
 
   List<String> getPermisions() {
-    if (user != null && user!.data != null && user!.data!.permissions != null) {
-      for (int i = 0; i < user!.data!.permissions!.length; i++) {
+    if (state.user != null &&
+        state.user!.data != null &&
+        state.user!.data!.permissions != null) {
+      List<String> newPermisions = [];
+      bool getMakhdoms = false;
+      bool manageMakhdoms = false;
+      bool addClassAttendance = false;
+      bool addAttendance = false;
+      bool addMakhdom = false;
+      bool updateMakhdoms = false;
+
+      for (int i = 0; i < state.user!.data!.permissions!.length; i++) {
         String permissionName =
-            user!.data!.permissions![i].permissionName.toString();
+            state.user!.data!.permissions![i].permissionName.toString();
 
         if (permissionName == 'getmakhdoms') {
-          hasGetMakhdomsPermission = true;
+          getMakhdoms = true;
         } else if (permissionName == 'mangemakhdoms') {
-          hasManageMakhdomsPermission = true;
+          manageMakhdoms = true;
         } else if (permissionName == 'add_classattendance') {
-          hasaddclassattendancePermission = true;
+          addClassAttendance = true;
         } else if (permissionName == 'add_attendance') {
-          hasaaddattendancePermission = true;
+          addAttendance = true;
         } else if (permissionName == 'add_makhdom') {
-          hasaaddMakhdomPermission = true;
-        }else if (permissionName == 'updatemakdoms') {
-          hasUpdateMakhdomsPermission = true;
+          addMakhdom = true;
+        } else if (permissionName == 'updatemakdoms') {
+          updateMakhdoms = true;
         }
 
-        permisions.add(permissionName);
+        newPermisions.add(permissionName);
       }
+
+      state = state.copyWith(
+        permisions: newPermisions,
+        hasGetMakhdomsPermission: getMakhdoms,
+        hasManageMakhdomsPermission: manageMakhdoms,
+        hasaddclassattendancePermission: addClassAttendance,
+        hasaaddattendancePermission: addAttendance,
+        hasaaddMakhdomPermission: addMakhdom,
+        hasUpdateMakhdomsPermission: updateMakhdoms,
+      );
     }
-    notifyListeners();
-    return permisions;
+    return state.permisions;
   }
 }

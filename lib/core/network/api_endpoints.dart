@@ -1,11 +1,16 @@
+import 'package:flutter/foundation.dart';
+
 class Endpoints {
-  static const BASE_URL = "http://services.san-mercurio.com/api/";
-  static const TEST_BASE_URL = "https://staging-services.azurewebsites.net/swagger/index.html/api/";
-  static const REQUEST_LOGIN = "auth/login";
-  static const REQUEST_MY_MAKHDOMS = "makhdom/mymakhdoms";
-  static const REQUEST_UPDATE_MAKHDOM = "makhdom";
-  static const REQUEST_ADD_MAKHDOM = "makhdom";
-  static const REQUEST_GET_KHADEM = "khadem";
-  static const REQUEST_ADD_ATTENDANCE = "attendance";
-  static const REQUEST_GET_ALL_NAMES = 'makhdom/getallnames';
+  static const baseUrl = kDebugMode
+      ? "http://192.168.1.6:8081/api/"
+      : "https://servicesqc.azurewebsites.net/api/";
+  static const testBaseUrl =
+      "https://staging-services.azurewebsites.net/swagger/index.html/api/";
+  static const requestLogin = "auth/login";
+  static const requestMyMakhdoms = "makhdom/mymakhdoms";
+  static const requestUpdateMakhdom = "makhdom";
+  static const requestAddMakhdom = "makhdom";
+  static const requestGetKhadem = "khadem";
+  static const requestAddAttendance = "attendance";
+  static const requestGetAllNames = 'makhdom/getallnames';
 }

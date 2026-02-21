@@ -15,11 +15,11 @@ class UpdateMakhdomRepo extends Repository {
     return exceptionHandler(
       () async {
         final Map<String, dynamic> response = await dioHelper.putData(
-          Endpoints.REQUEST_UPDATE_MAKHDOM,
+          Endpoints.requestUpdateMakhdom,
           data.toJson(),
         );
         return MakhdomUpdateModel.fromJson(response['data']);
-              throw ServerException(exceptionMessage: response['msg']);
+        throw ServerException(exceptionMessage: response['msg']);
       },
     );
   }

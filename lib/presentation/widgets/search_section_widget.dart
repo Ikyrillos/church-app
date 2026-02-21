@@ -1,5 +1,3 @@
-import 'package:abosiefienapp/Providers/add_class_attendance_provider.dart';
-import 'package:abosiefienapp/Providers/my_makhdoms_provider.dart';
 import 'package:abosiefienapp/presentation/widgets/filter_bottom_sheet_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -7,17 +5,18 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import '../../core/theming/app_styles_util.dart';
 
 class SearchSectionWidget extends StatelessWidget {
-  final MyMakhdomsProvider? provider;
-  final AddClassAttendanceProvider? attendanceProvider;
+  final TextEditingController controller;
+  final void Function(String)? onChanged;
   final bool filtervisibility;
   final void Function()? searchonTap;
 
-  const SearchSectionWidget(
-      {super.key,
-      this.provider,
-      this.attendanceProvider,
-      required this.filtervisibility,
-      this.searchonTap});
+  const SearchSectionWidget({
+    super.key,
+    required this.controller,
+    required this.filtervisibility,
+    this.onChanged,
+    this.searchonTap,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -75,13 +74,8 @@ class SearchSectionWidget extends StatelessWidget {
             child: Directionality(
               textDirection: TextDirection.rtl,
               child: TextFormField(
-                controller: provider != null
-                    ? provider!.searchController
-                    : attendanceProvider!.searchController, // todo here
-                onChanged: (value) {
-                  // todo here
-                  provider!.filterSearchResults(value);
-                },
+                controller: controller,
+                onChanged: onChanged,
                 decoration: InputDecoration(
                     border: InputBorder.none,
                     hintText: 'ابحث هنا ..',

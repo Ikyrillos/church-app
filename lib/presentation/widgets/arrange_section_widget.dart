@@ -4,44 +4,42 @@ import 'package:abosiefienapp/presentation/widgets/custom_container_widget.dart'
 import 'package:abosiefienapp/presentation/widgets/custom_dropdown_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:provider/provider.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../core/utils/app_debug_prints.dart';
 
-class ArrangeSectionWidget extends StatelessWidget {
+class ArrangeSectionWidget extends ConsumerWidget {
   const ArrangeSectionWidget({super.key});
 
   @override
-  Widget build(BuildContext context) {
-    return Consumer<MyMakhdomsProvider>(
-      builder: (context, MyMakhdomsProvider, child) {
-        printError('my ${MyMakhdomsProvider.sortValue.value}');
-        return CustomContainerWidget(
-            headline: 'رتب حسب',
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Expanded(
-                    child: SizedBox(
-                  height: 100.h,
-                  child: CustomDropdownWidget(
-                    hintText: 'رتب حسب',
-                    items: [
-                      DropdownModel(id: 1, name: 'تصاعدى'),
-                      DropdownModel(id: 2, name: 'تنازلى'),
-                    ],
-                    value: MyMakhdomsProvider.sortDirection,
-                    onChanged: (val) {
-                      MyMakhdomsProvider.setSelectedSortDir(val ?? 1);
+  Widget build(BuildContext context, WidgetRef ref) {
+    final myMakhdomsState = ref.watch(myMakhdomsProvider);
+    final myMakhdomsNotifier = ref.read(myMakhdomsProvider.notifier);
+    printError('my ${myMakhdomsState.sortValue.value}');
+    return CustomContainerWidget(
+        headline: 'رتب حسب',
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Expanded(
+                child: SizedBox(
+              height: 100.h,
+              child: CustomDropdownWidget(
+                hintText: 'رتب حسب',
+                items: [
+                  DropdownModel(id: 1, name: 'تصاعدى'),
+                  DropdownModel(id: 2, name: 'تنازلى'),
+                ],
+                value: myMakhdomsState.sortDirection,
+                onChanged: (val) {
+                  myMakhdomsNotifier.setSelectedSortDir(val ?? 1);
 
-                      printDone(
-                          'Sort Direction updated ${MyMakhdomsProvider.sortDirection}');
-                    },
-                  ),
-                )),
-              ],
-            ));
-      },
-    );
+                  printDone(
+                      'Sort Direction updated ${myMakhdomsState.sortDirection}');
+                },
+              ),
+            )),
+          ],
+        ));
   }
 }

@@ -13,7 +13,7 @@ class AddMakhdomRepo extends Repository {
       () async {
         printWarning('Iam In History Of Makhdoms Repo');
         final Map<String, dynamic> response =
-            await dioHelper.postData(Endpoints.REQUEST_ADD_MAKHDOM, body);
+            await dioHelper.postData(Endpoints.requestAddMakhdom, body);
         if (response['success'] == true) {
           return response['data'];
         }

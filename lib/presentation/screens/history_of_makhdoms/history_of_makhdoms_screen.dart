@@ -1,7 +1,7 @@
 import 'package:abosiefienapp/Providers/home_screen_provider.dart';
 import 'package:abosiefienapp/presentation/widgets/card_widget.dart';
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../core/route/app_routes.dart';
 import '../../../core/theming/app_styles_util.dart';
@@ -11,8 +11,8 @@ class HistoryOfMakhdomsScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Consumer<HomeScreenProvider>(
-        builder: (context, homeScreenProvider, child) {
+    return Consumer(builder: (context, ref, child) {
+      final homeScreenProviderVar = ref.watch(homeScreenProvider);
       return Scaffold(
         appBar: AppBar(
           title: Text(
@@ -34,7 +34,7 @@ class HistoryOfMakhdomsScreen extends StatelessWidget {
                 Icons.person_search,
               ),
               Visibility(
-                visible: homeScreenProvider.hasaddclassattendancePermission,
+                visible: homeScreenProviderVar.hasaddclassattendancePermission,
                 child: CardWidget(
                   "إضافة حضور",
                   () {

@@ -13,7 +13,7 @@ class KhademRepo extends Repository {
       () async {
         printWarning('Iam In Khadem Repo');
         final Map<String, dynamic> response = await dioHelper.getData(
-          endPont: Endpoints.REQUEST_GET_KHADEM,
+          endPont: Endpoints.requestGetKhadem,
         );
         if (response['success'] == true) {
           return KhademModel.fromJson(response);

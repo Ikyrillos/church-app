@@ -2,6 +2,7 @@ import 'package:bot_toast/bot_toast.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:provider/provider.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'core/app_providers/app_providers.dart';
 import 'core/network/dio_helper.dart';
@@ -21,7 +22,8 @@ class MyApp extends StatelessWidget {
   const MyApp({super.key});
   @override
   Widget build(BuildContext context) {
-    return MultiProvider(
+    return ProviderScope(
+        child: MultiProvider(
       providers: providers,
       builder: (context, child) {
         return ScreenUtilInit(
@@ -42,7 +44,7 @@ class MyApp extends StatelessWidget {
           },
         );
       },
-    );
+    ));
   }
 }
 
