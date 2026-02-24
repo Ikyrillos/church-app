@@ -1,48 +1,67 @@
 import 'dart:io';
 
+import 'package:abosiefienapp/core/errors/failures.dart';
 import 'package:abosiefienapp/core/shared_prefrence/app_shared_prefrence.dart';
+import 'package:abosiefienapp/core/utils/custom_function.dart';
 import 'package:abosiefienapp/core/widget/toast_m.dart';
-import 'package:abosiefienapp/model/AllNamesModel.dart';
+import 'package:abosiefienapp/model/AddAttendance/add_Attendance.dart';
+import 'package:abosiefienapp/repositories/add_class_attendance_repo.dart';
+import 'package:abosiefienapp/repositories/check_box_add_attendance_repo.dart';
 import 'package:dartz/dartz.dart';
-import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
 import 'package:intl/intl.dart' as intl;
 import 'package:path/path.dart';
+import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:sqflite/sqflite.dart';
 
-import '../core/errors/failures.dart';
 import '../core/utils/app_debug_prints.dart';
-import '../core/utils/custom_function.dart';
-import '../repositories/add_class_attendance_repo.dart';
-import '../repositories/check_box_add_attendance_repo.dart';
+
+part 'check_box_add_attendance_provder.g.dart';
 
 enum DataState { loading, noData, loaded }
 
-class CheckBoxAddAttendanceProvider with ChangeNotifier {
-  final CheckBoxAddAttendanceRepository _repository =
-      CheckBoxAddAttendanceRepository();
-  AddClassAttendanceRepo addClassAttendanceRepo = AddClassAttendanceRepo();
-  CustomFunctions customFunctions = CustomFunctions();
-  String errorMsg = '';
+class CheckBoxAddAttendanceState {
+  final List<AllNamesModel> data;
+  final DataState dataState;
+  final Map<String, bool> checkboxStates;
+  final String attendanceDate;
+  final String errorMsg;
 
-  List<AllNamesModel> _data = [];
+  CheckBoxAddAttendanceState({
+    this.data = const [],
+    this.dataState = DataState.noData,
+    this.checkboxStates = const {},
+    this.attendanceDate = '',
+    this.errorMsg = '',
+  });
 
-  List<AllNamesModel> get data => _data;
+  CheckBoxAddAttendanceState copyWith({
+    List<AllNamesModel>? data,
+    DataState? dataState,
+    Map<String, bool>? checkboxStates,
+    String? attendanceDate,
+    String? errorMsg,
+  }) {
+    return CheckBoxAddAttendanceState(
+      data: data ?? this.data,
+      dataState: dataState ?? this.dataState,
+      checkboxStates: checkboxStates ?? this.checkboxStates,
+      attendanceDate: attendanceDate ?? this.attendanceDate,
+      errorMsg: errorMsg ?? this.errorMsg,
+    );
+  }
+}
 
-  DataState _dataState = DataState.noData;
+@Riverpod(keepAlive: true)
+class CheckBoxAddAttendanceNotifier extends _$CheckBoxAddAttendanceNotifier {
+  final CheckBoxAddAttendanceRepository _repository = CheckBoxAddAttendanceRepository();
+  final AddClassAttendanceRepo addClassAttendanceRepo = AddClassAttendanceRepo();
+  final CustomFunctions customFunctions = CustomFunctions();
 
-  DataState get dataState => _dataState;
-
-  Map<String, bool> _checkboxStates = {};
-
-  Map<String, bool> get checkboxStates => _checkboxStates;
-
-  List<String> _names = [];
-
-  List<String> get names => _names;
-
-  List<int> _ids = [];
-
-  List<int> get ids => _ids;
+  @override
+  CheckBoxAddAttendanceState build() {
+    return CheckBoxAddAttendanceState();
+  }
 
   Future<Database> initializeDB() async {
     String path = await getDatabasesPath();
@@ -58,40 +77,44 @@ class CheckBoxAddAttendanceProvider with ChangeNotifier {
   }
 
   Future<void> saveCheckboxState(String stateCheckBox, bool value) async {
-    _checkboxStates[stateCheckBox] = value;
+    final newStates = Map<String, bool>.from(state.checkboxStates);
+    newStates[stateCheckBox] = value;
+    state = state.copyWith(checkboxStates: newStates);
     await AppSharedPreferences.setBool(stateCheckBox, value);
-    notifyListeners();
   }
 
   Future<void> loadCheckboxStates() async {
-    _checkboxStates = {};
-    for (String id in _ids.map((id) => id.toString())) {
-      bool? state = AppSharedPreferences.getBool(id);
-      _checkboxStates[id] = state ?? false;
+    final newStates = Map<String, bool>.from(state.checkboxStates);
+    for (var item in state.data) {
+      if (item.id != null) {
+        String idStr = item.id.toString();
+        bool? val = AppSharedPreferences.getBool(idStr);
+        newStates[idStr] = val ?? false;
+      }
     }
-    notifyListeners();
+    state = state.copyWith(checkboxStates: newStates);
   }
 
   Future<void> insertJsonData(List<Map<String, dynamic>> data) async {
     Database db = await initializeDB();
+    Batch batch = db.batch();
     for (var item in data) {
-      await db.insert(
+      batch.insert(
         'Data',
         {
-          'id': item['id'], // Store 'id' as an integer
+          'id': item['id'],
           'name': item['name']
         },
         conflictAlgorithm: ConflictAlgorithm.replace,
       );
     }
-
-    final List<Map<String, dynamic>> insertedData = await db.query('Data');
-    print('Data inserted into SQLite: $insertedData');
+    await batch.commit();
+    // final List<Map<String, dynamic>> insertedData = await db.query('Data');
+    // print('Data inserted into SQLite: $insertedData');
   }
 
   Future<void> saveJsonData() async {
-    _dataState = DataState.loading;
-    notifyListeners();
+    state = state.copyWith(dataState: DataState.loading);
 
     Either<Failure, List<Map<String, dynamic>>> jsonData =
         await _repository.getAllNames();
@@ -99,128 +122,65 @@ class CheckBoxAddAttendanceProvider with ChangeNotifier {
     jsonData.fold(
       (Failure l) {
         print('Failed to fetch data from repository: $l');
-        _dataState = DataState.noData;
-        notifyListeners();
+        state = state.copyWith(dataState: DataState.noData);
       },
       (List<Map<String, dynamic>> r) async {
         if (r.isNotEmpty) {
           await insertJsonData(r);
-
-          _names.clear();
-          _ids.clear();
-          _checkboxStates.clear();
-
-          for (var item in r) {
-            if (item['name'] != null && item['id'] != null) {
-              _names.add(item['name'] as String);
-              _ids.add(item['id'] as int); // Handle id as an integer
-              _checkboxStates[item['id'].toString()] = false;
-            }
-          }
-
           await retrieveJsonData();
         } else {
           print('No data fetched from repository to insert into SQLite.');
-          _dataState = DataState.noData;
+          state = state.copyWith(dataState: DataState.noData);
         }
       },
     );
   }
 
   Future<void> retrieveJsonData() async {
-    _dataState = DataState.loading;
-    notifyListeners();
+    state = state.copyWith(dataState: DataState.loading);
 
     Database db = await initializeDB();
     final List<Map<String, dynamic>> maps = await db.query('Data');
 
     if (maps.isNotEmpty) {
       print('Data retrieved from SQLite: ${maps.length}');
-      List<String> namesData = [];
-      List<int> idsData = [];
-
-      _data = maps.map((Map<String, dynamic> item) {
-        print('Mapping item: ${item['name']}');
-        namesData.add(item['name']);
-        idsData.add(item['id']);
+      
+      List<AllNamesModel> loadedData = maps.map((Map<String, dynamic> item) {
         return AllNamesModel.fromJson(item);
       }).toList();
 
-      _names = namesData;
-      _ids = idsData;
+      state = state.copyWith(data: loadedData);
       await loadCheckboxStates();
-
-      _dataState = DataState.loaded;
+      state = state.copyWith(dataState: DataState.loaded);
     } else {
       print('No data found in SQLite.');
-      _dataState = DataState.noData;
+      state = state.copyWith(dataState: DataState.noData);
     }
-
-    notifyListeners();
   }
 
   Future<void> clearCheckboxStates() async {
-    for (String id in _ids.map((id) => id.toString())) {
-      await AppSharedPreferences.remove(id);
+    for (var item in state.data) {
+      if (item.id != null) {
+        await AppSharedPreferences.remove(item.id.toString());
+      }
     }
-    _checkboxStates.clear();
-    notifyListeners();
+    state = state.copyWith(checkboxStates: {});
   }
 
   Future<void> loadDataOnStart() async {
-    _dataState = DataState.loading;
-    notifyListeners();
+    state = state.copyWith(dataState: DataState.loading);
 
     await retrieveJsonData();
 
-    if (_names.isEmpty) {
+    if (state.data.isEmpty) {
       await saveJsonData();
     }
 
-    if (_names.isNotEmpty) {
-      _dataState = DataState.loaded;
+    if (state.data.isNotEmpty) {
+      state = state.copyWith(dataState: DataState.loaded);
     } else {
-      _dataState = DataState.noData;
+      state = state.copyWith(dataState: DataState.noData);
     }
-
-    notifyListeners();
-  }
-
-  Future<void> printAllDataFromSQLite() async {
-    Database db = await initializeDB();
-    final List<Map<String, dynamic>> maps = await db.query('Data');
-
-    if (maps.isEmpty) {
-      print('No data found in SQLite.');
-    } else {
-      print('Data from SQLite:');
-      List<String> namesList = [];
-      for (var map in maps) {
-        namesList.add(map['name']);
-        print(map);
-      }
-      _names = namesList;
-      notifyListeners();
-    }
-  }
-
-  Future<void> printDatabaseSize() async {
-    int size = await getDatabaseSize();
-    print('Database size: $size bytes');
-  }
-
-  Future<int> getDatabaseSize() async {
-    String path = await getDatabasesPath();
-    String dbPath = join(path, 'data.db');
-    File file = File(dbPath);
-    return await file.length();
-  }
-
-  String? attendanceDate;
-
-  void setSelectedAttendanceDate(String value) {
-    attendanceDate = value;
-    notifyListeners();
   }
 
   void convertToDate() {
@@ -228,59 +188,55 @@ class CheckBoxAddAttendanceProvider with ChangeNotifier {
     String finalFormattedDate =
         intl.DateFormat('yyyy-MM-dd').format(dayToday).toString();
     printDone('finalFormattedDate $finalFormattedDate');
-    attendanceDate = finalFormattedDate;
-    notifyListeners();
+    state = state.copyWith(attendanceDate: finalFormattedDate);
+  }
+
+  void setSelectedAttendanceDate(String date) {
+    state = state.copyWith(attendanceDate: date);
   }
 
   Future<bool> addAttendance(BuildContext context) async {
     convertToDate();
     customFunctions.showProgress(context);
 
-    List<int> selectedIds = _checkboxStates.entries
+    List<int> selectedIds = state.checkboxStates.entries
         .where((entry) => entry.value == true)
-        .map((entry) => int.parse(entry.key))
+        .map((entry) => int.tryParse(entry.key) ?? 0)
+        .where((id) => id != 0)
         .toList();
 
     Either<Failure, dynamic> response =
         await addClassAttendanceRepo.requestAddAttendance({
-      "attendanceDate": attendanceDate,
-      "makhdomsId": selectedIds, // Send selected IDs as integers
+      "attendanceDate": state.attendanceDate,
+      "makhdomsId": selectedIds,
       "points": 0,
     });
 
     printDone('response $response');
-    notifyListeners();
 
+    bool success = false;
     response.fold(
       (Failure l) {
         printError(l.message);
         ToastM.show(l.message);
         customFunctions.showError(
             message: 'An error occurred, please try again', context: context);
-        customFunctions.hideProgress();
-        notifyListeners();
-        return false;
+        success = false;
       },
       (r) {
         if (r != null && r['success'] == true) {
-          errorMsg = r["errorMsg"] ?? '';
-          // customFunctions.showSuccess(message: r['data'], context: context);
-          customFunctions.hideProgress();
+          state = state.copyWith(errorMsg: r["errorMsg"] ?? '');
           clearCheckboxStates();
-          notifyListeners();
-          return true;
+          success = true;
         } else if (r != null && r['success'] == false) {
           customFunctions.showError(
               message: r["errorMsg"].toString(), context: context);
-          customFunctions.hideProgress();
-          notifyListeners();
-          return false;
+          success = false;
         }
       },
     );
 
     customFunctions.hideProgress();
-    notifyListeners();
-    return false;
+    return success;
   }
 }

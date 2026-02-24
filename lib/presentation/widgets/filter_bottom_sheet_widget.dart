@@ -15,8 +15,8 @@ class FilterBottomSheetWidget extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final myMakhdomsState = ref.watch(myMakhdomsProvider);
-    final myMakhdomsNotifier = ref.read(myMakhdomsProvider.notifier);
+    final myMakhdomsState = ref.watch(myMakhdomsNotifierProvider);
+    final myMakhdomsNotifier = ref.read(myMakhdomsNotifierProvider.notifier);
     return Directionality(
       textDirection: TextDirection.rtl,
       child: Padding(

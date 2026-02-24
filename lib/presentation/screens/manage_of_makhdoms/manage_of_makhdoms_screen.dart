@@ -12,7 +12,7 @@ class ManageOfMakhdoms extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Consumer(builder: (context, ref, child) {
-      final homescreenprovider = ref.watch(homeScreenProvider);
+      final homescreenprovider = ref.watch(homeScreenNotifierProvider);
       return Scaffold(
         appBar: AppBar(
           title: Text(

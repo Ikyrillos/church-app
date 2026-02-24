@@ -26,7 +26,7 @@ class _MyMakhdomsScreenState extends ConsumerState<MyMakhdomsScreen> {
   Future<void> callMyMakhdomsApi() async {
     Future.delayed(Duration.zero, () {
       ref
-          .read(myMakhdomsProvider.notifier)
+          .read(myMakhdomsNotifierProvider.notifier)
           .myMakhdoms(context)
           .then((value) => printDone('Done'));
     });
@@ -34,8 +34,8 @@ class _MyMakhdomsScreenState extends ConsumerState<MyMakhdomsScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final mymakhdomsState = ref.watch(myMakhdomsProvider);
-    final mymakhdomsNotifier = ref.read(myMakhdomsProvider.notifier);
+    final mymakhdomsState = ref.watch(myMakhdomsNotifierProvider);
+    final mymakhdomsNotifier = ref.read(myMakhdomsNotifierProvider.notifier);
 
     return Scaffold(
       bottomNavigationBar: Card(

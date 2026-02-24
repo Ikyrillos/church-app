@@ -73,7 +73,7 @@ class AddMakhdomNotifier extends _$AddMakhdomNotifier {
   void validate(BuildContext context) {
     if (formKey.currentState!.validate()) {
       printDone('Validated');
-      UserModel? recievedUserModel = ref.read(loginProvider).user;
+      UserModel? recievedUserModel = ref.read(loginNotifierProvider).user;
       printWarning('nameController =${nameController.text}');
       printWarning('phoneController =${phoneController.text}');
       printWarning('selectedKhadem =${state.selectedKhadem}');

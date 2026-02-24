@@ -6,55 +6,22 @@ part of 'home_screen_provider.dart';
 // RiverpodGenerator
 // **************************************************************************
 
-// GENERATED CODE - DO NOT MODIFY BY HAND
-// ignore_for_file: type=lint, type=warning
-
-@ProviderFor(HomeScreenNotifier)
-final homeScreenProvider = HomeScreenNotifierProvider._();
-
-final class HomeScreenNotifierProvider
-    extends $NotifierProvider<HomeScreenNotifier, HomeScreenState> {
-  HomeScreenNotifierProvider._()
-      : super(
-          from: null,
-          argument: null,
-          retry: null,
-          name: r'homeScreenProvider',
-          isAutoDispose: false,
-          dependencies: null,
-          $allTransitiveDependencies: null,
-        );
-
-  @override
-  String debugGetCreateSourceHash() => _$homeScreenNotifierHash();
-
-  @$internal
-  @override
-  HomeScreenNotifier create() => HomeScreenNotifier();
-
-  /// {@macro riverpod.override_with_value}
-  Override overrideWithValue(HomeScreenState value) {
-    return $ProviderOverride(
-      origin: this,
-      providerOverride: $SyncValueProvider<HomeScreenState>(value),
-    );
-  }
-}
-
 String _$homeScreenNotifierHash() =>
     r'4b10f9a1ed5623a0b9402fbbb55c4f682670d9f5';
 
-abstract class _$HomeScreenNotifier extends $Notifier<HomeScreenState> {
-  HomeScreenState build();
-  @$mustCallSuper
-  @override
-  void runBuild() {
-    final ref = this.ref as $Ref<HomeScreenState, HomeScreenState>;
-    final element = ref.element as $ClassProviderElement<
-        AnyNotifier<HomeScreenState, HomeScreenState>,
-        HomeScreenState,
-        Object?,
-        Object?>;
-    element.handleCreate(ref, build);
-  }
-}
+/// See also [HomeScreenNotifier].
+@ProviderFor(HomeScreenNotifier)
+final homeScreenNotifierProvider =
+    NotifierProvider<HomeScreenNotifier, HomeScreenState>.internal(
+  HomeScreenNotifier.new,
+  name: r'homeScreenNotifierProvider',
+  debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
+      ? null
+      : _$homeScreenNotifierHash,
+  dependencies: null,
+  allTransitiveDependencies: null,
+);
+
+typedef _$HomeScreenNotifier = Notifier<HomeScreenState>;
+// ignore_for_file: type=lint
+// ignore_for_file: subtype_of_sealed_class, invalid_use_of_internal_member, invalid_use_of_visible_for_testing_member, deprecated_member_use_from_same_package

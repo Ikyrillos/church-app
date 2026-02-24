@@ -6,51 +6,21 @@ part of 'login_provider.dart';
 // RiverpodGenerator
 // **************************************************************************
 
-// GENERATED CODE - DO NOT MODIFY BY HAND
-// ignore_for_file: type=lint, type=warning
+String _$loginNotifierHash() => r'de49c8dd5382aede8087e1a43bfa1c0215003c30';
 
+/// See also [LoginNotifier].
 @ProviderFor(LoginNotifier)
-final loginProvider = LoginNotifierProvider._();
+final loginNotifierProvider =
+    NotifierProvider<LoginNotifier, LoginState>.internal(
+  LoginNotifier.new,
+  name: r'loginNotifierProvider',
+  debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
+      ? null
+      : _$loginNotifierHash,
+  dependencies: null,
+  allTransitiveDependencies: null,
+);
 
-final class LoginNotifierProvider
-    extends $NotifierProvider<LoginNotifier, LoginState> {
-  LoginNotifierProvider._()
-      : super(
-          from: null,
-          argument: null,
-          retry: null,
-          name: r'loginProvider',
-          isAutoDispose: false,
-          dependencies: null,
-          $allTransitiveDependencies: null,
-        );
-
-  @override
-  String debugGetCreateSourceHash() => _$loginNotifierHash();
-
-  @$internal
-  @override
-  LoginNotifier create() => LoginNotifier();
-
-  /// {@macro riverpod.override_with_value}
-  Override overrideWithValue(LoginState value) {
-    return $ProviderOverride(
-      origin: this,
-      providerOverride: $SyncValueProvider<LoginState>(value),
-    );
-  }
-}
-
-String _$loginNotifierHash() => r'dff5d82fce50c33988f47a9a423ced244dbfe123';
-
-abstract class _$LoginNotifier extends $Notifier<LoginState> {
-  LoginState build();
-  @$mustCallSuper
-  @override
-  void runBuild() {
-    final ref = this.ref as $Ref<LoginState, LoginState>;
-    final element = ref.element as $ClassProviderElement<
-        AnyNotifier<LoginState, LoginState>, LoginState, Object?, Object?>;
-    element.handleCreate(ref, build);
-  }
-}
+typedef _$LoginNotifier = Notifier<LoginState>;
+// ignore_for_file: type=lint
+// ignore_for_file: subtype_of_sealed_class, invalid_use_of_internal_member, invalid_use_of_visible_for_testing_member, deprecated_member_use_from_same_package

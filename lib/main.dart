@@ -1,10 +1,8 @@
 import 'package:bot_toast/bot_toast.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:provider/provider.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import 'core/app_providers/app_providers.dart';
 import 'core/network/dio_helper.dart';
 import 'core/route/app_routes.dart';
 import 'core/route/route_manager.dart';
@@ -23,28 +21,24 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ProviderScope(
-        child: MultiProvider(
-      providers: providers,
-      builder: (context, child) {
-        return ScreenUtilInit(
-          designSize: const Size(375, 812),
-          builder: (context, child) {
-            return MaterialApp(
-              builder: BotToastInit(),
-              navigatorObservers: [BotToastNavigatorObserver()],
-              debugShowCheckedModeBanner: false,
-              title: "App Siefien App",
-              theme: ThemeData(
-                //  primarySwatch: Colors.purple,
-                primaryColor: Colors.purple,
-                visualDensity: VisualDensity.adaptivePlatformDensity,
-              ),
-              home: const MyHomePage(title: ''),
-            );
-          },
-        );
-      },
-    ));
+      child: ScreenUtilInit(
+        designSize: const Size(375, 812),
+        builder: (context, child) {
+          return MaterialApp(
+            builder: BotToastInit(),
+            navigatorObservers: [BotToastNavigatorObserver()],
+            debugShowCheckedModeBanner: false,
+            title: "App Siefien App",
+            theme: ThemeData(
+              //  primarySwatch: Colors.purple,
+              primaryColor: Colors.purple,
+              visualDensity: VisualDensity.adaptivePlatformDensity,
+            ),
+            home: const MyHomePage(title: ''),
+          );
+        },
+      ),
+    );
   }
 }
 

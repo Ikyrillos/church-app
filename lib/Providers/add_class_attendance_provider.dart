@@ -1,148 +1,154 @@
 import 'package:abosiefienapp/core/errors/failures.dart';
 import 'package:abosiefienapp/core/utils/custom_function.dart';
-import 'package:abosiefienapp/model/attendance_settings.dart';
 import 'package:abosiefienapp/model/mymakhdoms_model.dart';
 import 'package:abosiefienapp/repositories/add_class_attendance_repo.dart';
 import 'package:abosiefienapp/repositories/my_makhdoms_repo.dart';
 import 'package:dartz/dartz.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart' as intl;
+import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 import '../core/utils/app_debug_prints.dart';
 
-class AddClassAttendanceProvider extends ChangeNotifier {
+part 'add_class_attendance_provider.g.dart';
+
+class AddClassAttendanceState {
+  final List<Data> allMakhdoms;
+  final Set<int> selectedIds;
+  final String searchQuery;
+  final bool isLoading;
+  final String errorMsg;
+  final String absentDate;
+
+  AddClassAttendanceState({
+    this.allMakhdoms = const [],
+    this.selectedIds = const {},
+    this.searchQuery = '',
+    this.isLoading = false,
+    this.errorMsg = '',
+    this.absentDate = '',
+  });
+
+  AddClassAttendanceState copyWith({
+    List<Data>? allMakhdoms,
+    Set<int>? selectedIds,
+    String? searchQuery,
+    bool? isLoading,
+    String? errorMsg,
+    String? absentDate,
+  }) {
+    return AddClassAttendanceState(
+      allMakhdoms: allMakhdoms ?? this.allMakhdoms,
+      selectedIds: selectedIds ?? this.selectedIds,
+      searchQuery: searchQuery ?? this.searchQuery,
+      isLoading: isLoading ?? this.isLoading,
+      errorMsg: errorMsg ?? this.errorMsg,
+      absentDate: absentDate ?? this.absentDate,
+    );
+  }
+
+  List<Data> get filteredMakhdoms {
+    if (searchQuery.isEmpty) {
+      return allMakhdoms;
+    }
+    return allMakhdoms
+        .where((item) =>
+            item.name != null &&
+            item.name!.toLowerCase().contains(searchQuery.toLowerCase()))
+        .toList();
+  }
+}
+
+@Riverpod(keepAlive: true)
+class AddClassAttendanceNotifier extends _$AddClassAttendanceNotifier {
   MyMakhdomsRepo myMakhdomsRepo = MyMakhdomsRepo();
   AddClassAttendanceRepo addClassAttendanceRepo = AddClassAttendanceRepo();
-
   CustomFunctions customFunctions = CustomFunctions();
 
-  //Sort and Filter
-  TextEditingController searchController = TextEditingController();
-  List<Data> items = [];
-  int sortCoulmn = 1;
-  int sortDirection = 1;
-  String absentDate = '';
+  @override
+  AddClassAttendanceState build() {
+    return AddClassAttendanceState();
+  }
 
-  int listLength = 0;
-  List<Data> allMakhdoms = [];
-  String errorMsg = 'حدث خطأ ما برجاء المحاولة مرة اّخرى';
-  List<AttendanceSetting> makhdomsAttendance = [];
-  List finalList = [];
-
-  Future<bool> myMakhdoms(BuildContext context) async {
+  Future<void> myMakhdoms(BuildContext context) async {
     convertToDate();
-    printWarning('sortCoulmn $sortCoulmn');
-    printWarning('sortDirection $sortDirection');
-    printWarning('absentDate $absentDate');
-
-    customFunctions.showProgress(context);
+    state = state.copyWith(isLoading: true);
+    // customFunctions.showProgress(context); // We use state.isLoading for UI feedback ideally, but keeping side effect for now if UI expects it. 
+    // Actually, let's try to remove context if possible, but the original code used context heavily.
+    // I will keep showProgress calls in the UI layer if possible, or just use state.isLoading.
+    // For now, I'll remove showProgress here and let the UI show a spinner based on state.isLoading.
+    
+    // Original params: sortCoulmn=1, sortDirection=1
     Either<Failure, MyMakhdomsModel?> responseMyMakhdoms = await myMakhdomsRepo
-        .requestMyMakhdoms(sortCoulmn, sortDirection, absentDate);
-    printDone('response $responseMyMakhdoms');
-    notifyListeners();
+        .requestMyMakhdoms(1, 1, state.absentDate);
+    
     responseMyMakhdoms.fold(
       (Failure l) {
         printError(l.message);
-        customFunctions.showError(message: errorMsg, context: context);
-        customFunctions.hideProgress();
-        notifyListeners();
-        return false;
+        state = state.copyWith(isLoading: false, errorMsg: l.message ?? 'Error');
+        // customFunctions.showError(message: state.errorMsg, context: context);
       },
       (MyMakhdomsModel? r) {
-        listLength = r!.data!.length;
-        allMakhdoms = r.data!;
-        items = allMakhdoms;
-        fillMakhdomsAttendance();
-        errorMsg = r.errorMsg!;
-        customFunctions.hideProgress();
-        notifyListeners();
-        return true;
+        if (r?.data != null) {
+          state = state.copyWith(
+            allMakhdoms: r!.data!,
+            isLoading: false,
+            errorMsg: r.errorMsg ?? '',
+          );
+        } else {
+          state = state.copyWith(isLoading: false);
+        }
       },
     );
-    notifyListeners();
-    return false;
   }
 
-  void fillMakhdomsAttendance() {
-    makhdomsAttendance = [];
-    notifyListeners();
-    for (int i = 0; i < items.length; i++) {
-      makhdomsAttendance
-          .add(AttendanceSetting(value: false, makhdomId: items[i].id!));
-      notifyListeners();
-      printWarning('obj in makhdomsAttendance ${makhdomsAttendance[i].value}');
+  void toggleAttendance(int makhdomId) {
+    final newSet = Set<int>.from(state.selectedIds);
+    if (newSet.contains(makhdomId)) {
+      newSet.remove(makhdomId);
+    } else {
+      newSet.add(makhdomId);
     }
-    printError('LENGTH ${items.length}');
-    notifyListeners();
+    state = state.copyWith(selectedIds: newSet);
   }
 
-  void rePareListToSend() {
-    for (int i = 0; i < makhdomsAttendance.length; i++) {
-      if (makhdomsAttendance[i].value == true) {
-        finalList.add(makhdomsAttendance[i].makhdomId);
-      }
-      notifyListeners();
-    }
-    printDone('Final List $finalList');
-  }
-
-  void changeSwitchValue(int index, bool newVal) {
-    makhdomsAttendance[index].value = newVal;
-    notifyListeners();
-  }
-
-  void filterSearchResults(String query) {
-    items = allMakhdoms
-        .where((item) => item.name!.toLowerCase().contains(query.toLowerCase()))
-        .toList();
-    notifyListeners();
+  void setSearchQuery(String query) {
+    state = state.copyWith(searchQuery: query);
   }
 
   void convertToDate() {
     DateTime dayToday = DateTime.now();
     String finalFormatedDate =
         intl.DateFormat('yyyy-MM-dd').format(dayToday).toString();
-    printDone('finalFormatedDate $finalFormatedDate');
-    absentDate = finalFormatedDate;
-    notifyListeners();
-  }
-
-  void clearSearchController() {
-    searchController.text = '';
-    notifyListeners();
+    state = state.copyWith(absentDate: finalFormatedDate);
   }
 
   Future<bool> addAttendance(BuildContext context) async {
-    convertToDate();
-    rePareListToSend();
-
+    // rePareListToSend -> state.selectedIds.toList()
+    
     customFunctions.showProgress(context);
+    
     Either<Failure, dynamic> response = await addClassAttendanceRepo
         .requestAddAttendance({
-      "attendanceDate": absentDate,
-      "makhdomsId": finalList,
+      "attendanceDate": state.absentDate,
+      "makhdomsId": state.selectedIds.toList(),
       "points": 0
     });
-    printDone('response $response');
+    
+    bool success = false;
     response.fold(
       (Failure l) {
         printError(l.message);
-        customFunctions.showError(message: errorMsg, context: context);
-        customFunctions.hideProgress();
-        notifyListeners();
-        return false;
+        customFunctions.showError(message: l.message ?? 'Error', context: context);
+        success = false;
       },
       (r) {
-        errorMsg = r["errorMsg"] ?? '';
-        customFunctions.showSuccess(message: r['data'], context: context);
-        customFunctions.hideProgress();
-        notifyListeners();
-        return true;
+        customFunctions.showSuccess(message: r['data'] ?? 'Saved', context: context);
+        success = true;
       },
     );
 
     customFunctions.hideProgress();
-    notifyListeners();
-    return false;
+    return success;
   }
 }
