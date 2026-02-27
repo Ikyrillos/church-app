@@ -7,6 +7,7 @@ import 'package:abosiefienapp/core/network/dio_helper.dart';
 import 'package:abosiefienapp/core/route/app_routes.dart';
 import 'package:abosiefienapp/core/route/route_manager.dart';
 import 'package:abosiefienapp/core/services/app_shared_prefrence.dart';
+import 'package:abosiefienapp/core/theme/app_theme.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -25,15 +26,17 @@ class MyApp extends StatelessWidget {
         designSize: const Size(375, 812),
         builder: (context, child) {
           return MaterialApp(
-            builder: BotToastInit(),
+            builder: (context, child) {
+              child = BotToastInit()(context, child);
+              return Directionality(
+                textDirection: TextDirection.rtl,
+                child: child,
+              );
+            },
             navigatorObservers: [BotToastNavigatorObserver()],
             debugShowCheckedModeBanner: false,
             title: "App Siefien App",
-            theme: ThemeData(
-              //  primarySwatch: Colors.purple,
-              primaryColor: Colors.purple,
-              visualDensity: VisualDensity.adaptivePlatformDensity,
-            ),
+            theme: AppTheme.lightTheme,
             home: const MyHomePage(title: ''),
           );
         },
@@ -55,6 +58,13 @@ class _MyHomePageState extends State<MyHomePage> {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
+      builder: (context, child) {
+        return Directionality(
+          textDirection: TextDirection.rtl,
+          child: child ?? const SizedBox(),
+        );
+      },
+      theme: AppTheme.lightTheme,
       onGenerateRoute: AppRouteManager.generateRoute,
       debugShowCheckedModeBanner: false,
       title: "رعية الله",

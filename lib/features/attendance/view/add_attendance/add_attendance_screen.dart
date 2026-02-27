@@ -7,7 +7,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:intl/intl.dart' as intl;
 
-import 'package:abosiefienapp/core/theme/app_styles_util.dart';
+import 'package:abosiefienapp/core/theme/app_theme.dart';
 import 'package:abosiefienapp/core/utils/custom_function.dart';
 
 class AddAttendanceScreen extends HookConsumerWidget {
@@ -42,22 +42,11 @@ class AddAttendanceScreen extends HookConsumerWidget {
                 fontWeight: FontWeight.w600,
               ),
             ),
-            ElevatedButton(
-              style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.blue,
-                fixedSize:
-                    Size(MediaQuery.of(context).size.width / 1.5, 30.h),
-                padding:
-                    EdgeInsets.symmetric(horizontal: 20.0.w, vertical: 0.0.h),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.all(
-                    Radius.circular(12.0.r),
-                  ),
-                ),
+            FilledButton(
+              style: FilledButton.styleFrom(
+                minimumSize: Size(MediaQuery.of(context).size.width / 1.5, 48),
               ),
-              child: Text('إرسال الحضور',
-                  style: AppStylesUtil.textRegularStyle(
-                      18.sp, Colors.white, FontWeight.w500)),
+              child: const Text('إرسال الحضور'),
               onPressed: () async {
                 if (state.localAttendanceMakhdoms.isNotEmpty) {
                   bool success = await notifier.addAttendance(context, pointsController.text);
@@ -78,14 +67,10 @@ class AddAttendanceScreen extends HookConsumerWidget {
       appBar: AppBar(
         title: Row(
           children: [
-            Text(
-              'إضافة الحضور',
-              style: AppStylesUtil.textRegularStyle(
-                  20.0, Colors.black, FontWeight.w500),
-            ),
+            const Text('إضافة الحضور'),
             const Spacer(),
             state.isLoading
-                ? const CircularProgressIndicator(color: Colors.blue)
+                ? const CircularProgressIndicator()
                 : Text("${state.storedDataCount}")
           ],
         ),
@@ -94,7 +79,7 @@ class AddAttendanceScreen extends HookConsumerWidget {
             onPressed: () {
               notifier.saveJsonData(); // Load names into local SQLite cache
             },
-            icon: const Icon(Icons.download, color: Colors.blue),
+            icon: Icon(Icons.download, color: Theme.of(context).colorScheme.primary),
           ),
         ],
       ),
@@ -116,12 +101,13 @@ class AddAttendanceScreen extends HookConsumerWidget {
                         height: 40,
                         controller: pointsController,
                         keyboardType: TextInputType.number,
+                        textInputAction: TextInputAction.next,
                         lines: 1,
                         obscure: false,
                         textAlign: TextAlign.start,
                       ),
-                      InkWell(
-                        onTap: () async {
+                      OutlinedButton.icon(
+                        onPressed: () async {
                           DateTime? selected =
                               await customShowDatePicker(context);
                           if (selected != null) {
@@ -130,20 +116,16 @@ class AddAttendanceScreen extends HookConsumerWidget {
                                     .format(selected));
                           }
                         },
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            Icon(Icons.date_range,
-                                color: Colors.blue, size: 25.sp),
-                            10.horizontalSpace,
-                            Text(
-                              state.attendanceDate == ''
-                                  ? 'اختيار التاريخ'
-                                  : state.attendanceDate,
-                              style: AppStylesUtil.textRegularStyle(
-                                  17.sp, Colors.black, FontWeight.w500),
-                            ),
-                          ],
+                        icon: const Icon(Icons.date_range),
+                        label: Text(
+                          state.attendanceDate == ''
+                              ? 'اختيار التاريخ'
+                              : state.attendanceDate,
+                        ),
+                        style: OutlinedButton.styleFrom(
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(AppTheme.radiusM),
+                          ),
                         ),
                       ),
                     ],
@@ -151,20 +133,11 @@ class AddAttendanceScreen extends HookConsumerWidget {
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                     children: [
-                      ElevatedButton(
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: Colors.blue,
-                          fixedSize: Size(126.w, 30.h),
-                          padding: const EdgeInsets.symmetric(
-                              horizontal: 20.0, vertical: 8.0),
-                          shape: const RoundedRectangleBorder(
-                            borderRadius:
-                                BorderRadius.all(Radius.circular(12.0)),
-                          ),
+                      FilledButton(
+                        style: FilledButton.styleFrom(
+                          minimumSize: Size(126.w, 48),
                         ),
-                        child: Text('اضافة',
-                            style: AppStylesUtil.textRegularStyle(
-                                18.sp, Colors.white, FontWeight.w500)),
+                        child: const Text('اضافة'),
                         onPressed: () async {
                           notifier.validateAndAdd(context, codeController.text);
                         },
@@ -175,6 +148,7 @@ class AddAttendanceScreen extends HookConsumerWidget {
                         height: 40,
                         controller: codeController,
                         keyboardType: TextInputType.number,
+                        textInputAction: TextInputAction.done,
                         lines: 1,
                         obscure: false,
                         textAlign: TextAlign.start,
@@ -198,18 +172,32 @@ class AddAttendanceScreen extends HookConsumerWidget {
                   itemBuilder: (context, index) {
                     final item = state.localAttendanceMakhdoms[index];
                     return Card(
-                      margin: const EdgeInsets.all(8.0),
-                      elevation: 2.0,
+                      margin: const EdgeInsets.symmetric(vertical: AppTheme.spacingS),
                       child: ListTile(
                         title: Text(
                             'ID: ${item.id}'),
                         subtitle: Text(
                             'Name: ${item.name}'),
                         trailing: IconButton(
-                          icon: const Icon(Icons.delete),
+                          icon: Icon(Icons.delete_outline, color: Theme.of(context).colorScheme.error),
                           onPressed: () {
-                             notifier.removeMakhdom(item.id);
-                                                    },
+                             showDialog(
+                              context: context,
+                              builder: (ctx) => AlertDialog(
+                                icon: Icon(Icons.delete_outline, color: Theme.of(context).colorScheme.error),
+                                title: const Text('حذف المخدوم'),
+                                content: const Text('هل أنت متأكد من الحذف؟'),
+                                actions: [
+                                  TextButton(onPressed: () => Navigator.pop(ctx), child: const Text('إلغاء')),
+                                  FilledButton(
+                                    style: FilledButton.styleFrom(backgroundColor: Theme.of(context).colorScheme.error),
+                                    onPressed: () { Navigator.pop(ctx); notifier.removeMakhdom(item.id); },
+                                    child: const Text('حذف'),
+                                  ),
+                                ],
+                              ),
+                            );
+                          },
                         ),
                       ),
                     );

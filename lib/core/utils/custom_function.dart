@@ -4,6 +4,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
 import 'package:abosiefienapp/core/theme/app_styles_util.dart';
+import 'package:abosiefienapp/core/theme/app_theme.dart';
 
 class CustomFunctions {
   bool loaderVisible = false;
@@ -12,15 +13,11 @@ class CustomFunctions {
   void showError({required String message, required BuildContext context}) {
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
+        content: Text(message),
         behavior: SnackBarBehavior.floating,
-        backgroundColor: Colors.red,
-        content: Text(
-          message,
-          textDirection: TextDirection.rtl,
-          textAlign: TextAlign.center,
-          style:
-              AppStylesUtil.textRegularStyle(18, Colors.white, FontWeight.w400),
-        ),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(AppTheme.radiusM)),
+        backgroundColor: Theme.of(context).colorScheme.errorContainer,
       ),
     );
   }
@@ -28,15 +25,11 @@ class CustomFunctions {
   void showSuccess({required String message, required BuildContext context}) {
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
+        content: Text(message),
         behavior: SnackBarBehavior.floating,
-        backgroundColor: Colors.green,
-        content: Text(
-          message,
-          textDirection: TextDirection.rtl,
-          textAlign: TextAlign.center,
-          style:
-              AppStylesUtil.textRegularStyle(18, Colors.white, FontWeight.w400),
-        ),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(AppTheme.radiusM)),
+        backgroundColor: Theme.of(context).colorScheme.secondaryContainer,
       ),
     );
   }

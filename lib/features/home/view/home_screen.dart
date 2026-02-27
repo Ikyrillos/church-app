@@ -4,96 +4,81 @@ import 'package:abosiefienapp/core/widgets/card_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_hooks/flutter_hooks.dart';
+import 'package:hooks_riverpod/hooks_riverpod.dart';
 
 import 'package:abosiefienapp/core/route/app_routes.dart';
 import 'package:abosiefienapp/core/services/app_shared_prefrence.dart';
-import 'package:abosiefienapp/core/theme/app_styles_util.dart';
+import 'package:abosiefienapp/core/theme/app_theme.dart';
 
-class HomeScreen extends ConsumerStatefulWidget {
+class HomeScreen extends HookConsumerWidget {
   const HomeScreen({super.key});
 
   @override
-  ConsumerState<HomeScreen> createState() => _HomeScreenState();
-}
+  Widget build(BuildContext context, WidgetRef ref) {
+    useEffect(() {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        ref.read(homeScreenNotifierProvider.notifier).getStoredUser(context);
+      });
+      return null;
+    }, const []);
 
-class _HomeScreenState extends ConsumerState<HomeScreen> {
-  @override
-  void initState() {
-    super.initState();
-    WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
-      ref.read(homeScreenNotifierProvider.notifier).getStoredUser(context);
-    });
-  }
+    final homescreenprovider = ref.watch(homeScreenNotifierProvider);
 
-  @override
-  Widget build(BuildContext context) {
-    return Consumer(
-      builder: (context, ref, child) {
-        final homescreenprovider = ref.watch(homeScreenNotifierProvider);
-        return WillPopScope(
-          onWillPop: () async {
-            SystemChannels.platform.invokeMethod('SystemNavigator.pop');
-            return false;
-          },
-          child: Scaffold(
-            appBar: AppBar(
-              automaticallyImplyLeading: false,
-              title: Text(
-                "برنامج المخدومين",
-                textDirection: TextDirection.rtl,
-                style: AppStylesUtil.textBoldStyle(
-                    22, Colors.black, FontWeight.w500),
-              ),
-              // automaticallyImplyLeading: false,
-              actions: [
-                IconButton(
-                    icon: const Icon(Icons.logout),
-                    onPressed: () async {
-                      AppSharedPreferences.clear();
-                      context.pushNamedAndRemoveUntil(
-                          AppRoutes.loginScreenRouteName,
-                          predicate: (route) => false);
-                      // SystemChannels.platform
-                      //     .invokeMethod('SystemNavigator.pop');
-                    })
-              ],
-              // leading: Text("data"),
-            ),
-            body: SizedBox(
-              height: double.infinity,
-              width: double.infinity,
-              child: Column(children: [
-                const SizedBox(
-                  height: 10,
-                ),
-                Visibility(
-                  visible: homescreenprovider.hasGetMakhdomsPermission,
-                  child: CardWidget(
-                    "سجل المخدومين",
-                    () {
-                      Navigator.pushNamed(
-                          context, AppRoutes.historyOfMakhdomsRouteName);
-                    },
-                    Icons.person,
-                  ),
-                ),
-                Visibility(
-                  visible: homescreenprovider.hasManageMakhdomsPermission,
-                  child: CardWidget(
-                    "إدارة المخدومين",
-                    () {
-                      context.pushNamed(
-                        routeName: AppRoutes.manageOfMakhdomsRouteName,
-                      );
-                    },
-                    Icons.person_pin_sharp,
-                  ),
-                ),
-              ]),
-            ),
-          ),
-        );
+    return PopScope(
+      canPop: false,
+      onPopInvokedWithResult: (didPop, result) {
+        if (didPop) {
+          return;
+        }
+        SystemChannels.platform.invokeMethod('SystemNavigator.pop');
       },
+      child: Scaffold(
+        appBar: AppBar(
+          automaticallyImplyLeading: false,
+          title: const Text(
+            "برنامج المخدومين",
+            textDirection: TextDirection.rtl,
+          ),
+          actions: [
+            IconButton(
+                icon: const Icon(Icons.logout),
+                onPressed: () async {
+                  AppSharedPreferences.clear();
+                  context.pushNamedAndRemoveUntil(
+                      AppRoutes.loginScreenRouteName,
+                      predicate: (route) => false);
+                })
+          ],
+        ),
+        body: ListView(
+          padding: const EdgeInsets.all(AppTheme.spacingM),
+          children: [
+            if (homescreenprovider.hasGetMakhdomsPermission)
+              Padding(
+                padding: const EdgeInsets.only(bottom: AppTheme.spacingM),
+                child: CardWidget(
+                  "سجل المخدومين",
+                  () {
+                    Navigator.pushNamed(
+                        context, AppRoutes.historyOfMakhdomsRouteName);
+                  },
+                  Icons.person,
+                ),
+              ),
+            if (homescreenprovider.hasManageMakhdomsPermission)
+              CardWidget(
+                "إدارة المخدومين",
+                () {
+                  context.pushNamed(
+                    routeName: AppRoutes.manageOfMakhdomsRouteName,
+                  );
+                },
+                Icons.person_pin_sharp,
+              ),
+          ],
+        ),
+      ),
     );
   }
 }

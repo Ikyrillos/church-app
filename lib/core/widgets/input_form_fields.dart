@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
 
-import 'package:abosiefienapp/core/theme/app_styles_util.dart';
-
 class InputFieldWidget extends StatelessWidget {
   final bool obscure;
   final double? height;
@@ -13,6 +11,7 @@ class InputFieldWidget extends StatelessWidget {
   final String? labeltext;
   final String? initialvalue;
   final TextInputType? keyboardType;
+  final TextInputAction textInputAction;
   final TextEditingController? controller;
   final TextStyle? hintstyle;
   final TextStyle? labelStyle;
@@ -20,13 +19,12 @@ class InputFieldWidget extends StatelessWidget {
   final TextAlign? textAlign;
   final bool? validation;
   final String? validationText;
-  void Function(String)? onChanged;
+  final void Function(String)? onChanged;
+  final void Function()? onChangedCompleted;
+  final dynamic disable;
+  final bool? isDisable;
 
-  void Function()? onChangedCompleted;
-  dynamic disable;
-  bool? isDisable = true;
-
-  InputFieldWidget({
+  const InputFieldWidget({
     super.key,
     required this.obscure,
     this.height,
@@ -35,6 +33,7 @@ class InputFieldWidget extends StatelessWidget {
     this.controller,
     this.suffix,
     this.keyboardType,
+    this.textInputAction = TextInputAction.next,
     this.initialvalue,
     this.hinttext,
     this.labeltext,
@@ -48,39 +47,35 @@ class InputFieldWidget extends StatelessWidget {
     this.onChangedCompleted,
     this.prefix,
     this.disable,
-    this.isDisable,
+    this.isDisable = true,
   });
 
   @override
   Widget build(BuildContext context) {
     return Container(
       width: width,
-      margin: EdgeInsets.symmetric(horizontal: 0, vertical: 0),
-      padding: EdgeInsets.symmetric(vertical: 16),
+      margin: const EdgeInsets.symmetric(horizontal: 0, vertical: 0),
+      padding: const EdgeInsets.symmetric(vertical: 16),
       child: Directionality(
         textDirection: TextDirection.rtl,
         child: TextFormField(
           initialValue: initialvalue,
-          // autovalidate:true,
-          //  onChanged: onchanged,
           onEditingComplete: onChangedCompleted,
           onChanged: onChanged,
           autocorrect: true,
-          // onEditingComplete: onchanged,
           controller: controller,
           maxLines: lines,
           enabled: isDisable,
-          cursorColor: Colors.blue,
-          textAlign: textAlign != null ? textAlign! : TextAlign.start,
-          //textDirection: TextDirection.rtl,
+          cursorColor: Theme.of(context).colorScheme.primary,
+          textAlign: textAlign ?? TextAlign.start,
           obscureText: obscure,
           keyboardType: keyboardType,
-          style: style ?? AppStylesUtil.textRegularStyle(
-                  16, Colors.black, FontWeight.normal),
+          textInputAction: textInputAction,
+          style: style ?? Theme.of(context).textTheme.bodyLarge,
           validator: (value) {
             if (validation == false && validation != null) {
               return validationText;
-            } else if (value!.isEmpty) {
+            } else if (value == null || value.isEmpty) {
               return validationText;
             } else {
               return null;
@@ -89,53 +84,12 @@ class InputFieldWidget extends StatelessWidget {
           decoration: InputDecoration(
             hintText: hinttext,
             labelText: labeltext,
-            hintStyle: hintstyle ??
-                AppStylesUtil.textRegularStyle(
-                    16, Colors.black, FontWeight.w500),
-            labelStyle: labelStyle ??
-                AppStylesUtil.textRegularStyle(
-                    16, Colors.black, FontWeight.w500),
+            hintStyle: hintstyle ?? Theme.of(context).textTheme.bodyLarge,
+            labelStyle: labelStyle ?? Theme.of(context).textTheme.bodyLarge,
             contentPadding:
                 const EdgeInsets.only(left: 15, right: 15, top: 10, bottom: 10),
             prefixIcon: suffix,
             suffixIcon: prefix,
-            filled: true,
-            fillColor: Colors.white,
-            enabledBorder: OutlineInputBorder(
-              borderSide: BorderSide(
-                  color: isDisable == false ? Colors.white : Colors.blue,
-                  width: 2,
-                  style: BorderStyle.solid),
-              borderRadius: BorderRadius.circular(12),
-            ),
-            focusedBorder: OutlineInputBorder(
-              borderSide: BorderSide(
-                  style: BorderStyle.solid,
-                  color: isDisable == false ? Colors.white : Colors.blue,
-                  width: 2),
-              borderRadius: BorderRadius.circular(12),
-            ),
-            disabledBorder: OutlineInputBorder(
-              borderSide: BorderSide(
-                  style: BorderStyle.solid,
-                  color: isDisable == false ? Colors.white : Colors.blue,
-                  width: 2),
-              borderRadius: BorderRadius.circular(12),
-            ),
-            errorBorder: OutlineInputBorder(
-              borderSide: BorderSide(
-                  style: BorderStyle.solid,
-                  color: isDisable == false ? Colors.white : Colors.blue,
-                  width: 2),
-              borderRadius: BorderRadius.circular(12),
-            ),
-            focusedErrorBorder: OutlineInputBorder(
-              borderSide: BorderSide(
-                  style: BorderStyle.solid,
-                  color: isDisable == false ? Colors.white : Colors.blue,
-                  width: 2),
-              borderRadius: BorderRadius.circular(12),
-            ),
           ),
         ),
       ),
