@@ -1,3 +1,5 @@
+import 'package:abosiefienapp/features/attendance/providers/add_attendance_provider.dart'
+    show DataState;
 import 'package:abosiefienapp/features/attendance/providers/check_box_add_attendance_provder.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
@@ -12,10 +14,11 @@ class CheckBoxAddAttendanceScreen extends HookConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    
     useEffect(() {
       Future.microtask(() {
-        ref.read(checkBoxAddAttendanceNotifierProvider.notifier).loadDataOnStart();
+        ref
+            .read(checkBoxAddAttendanceNotifierProvider.notifier)
+            .loadDataOnStart();
       });
       return null;
     }, []);
@@ -54,8 +57,11 @@ class CheckBoxAddAttendanceScreen extends HookConsumerWidget {
             onPressed: () async {
               DateTime? selected = await customShowDatePicker(context);
               if (selected != null) {
-                 final formattedDate = intl.DateFormat('yyyy-MM-dd').format(selected);
-                 ref.read(checkBoxAddAttendanceNotifierProvider.notifier).setSelectedAttendanceDate(formattedDate);
+                final formattedDate =
+                    intl.DateFormat('yyyy-MM-dd').format(selected);
+                ref
+                    .read(checkBoxAddAttendanceNotifierProvider.notifier)
+                    .setSelectedAttendanceDate(formattedDate);
               }
             },
             icon: Icon(
@@ -94,7 +100,7 @@ class CheckBoxAddAttendanceScreen extends HookConsumerWidget {
                   itemCount: state.data.length,
                   itemBuilder: (BuildContext context, int index) {
                     final item = state.data[index];
-                    String name = item.name ?? '';
+                    String name = item.name;
                     String id = item.id.toString();
 
                     return Container(
@@ -106,11 +112,11 @@ class CheckBoxAddAttendanceScreen extends HookConsumerWidget {
                         color: const Color(0xffF8EDED),
                       ),
                       child: CheckboxListTile(
-                        subtitle: Text(
-                            state.attendanceDate.isNotEmpty 
-                            ? state.attendanceDate 
-                            : intl.DateFormat('yyyy-MM-dd').format(DateTime.now()).toString()
-                        ),
+                        subtitle: Text(state.attendanceDate.isNotEmpty
+                            ? state.attendanceDate
+                            : intl.DateFormat('yyyy-MM-dd')
+                                .format(DateTime.now())
+                                .toString()),
                         value: state.checkboxStates[id] ?? false,
                         onChanged: (value) {
                           notifier.saveCheckboxState(id, value ?? false);

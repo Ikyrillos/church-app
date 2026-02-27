@@ -1,23 +1,24 @@
-
 import 'package:abosiefienapp/core/errors/failures.dart';
 import 'package:abosiefienapp/core/services/app_shared_prefrence.dart';
 import 'package:abosiefienapp/core/utils/custom_function.dart';
 import 'package:abosiefienapp/core/widgets/toast_m.dart' show AppToast;
 import 'package:abosiefienapp/features/attendance/models/add_attendance_model.dart';
+import 'package:abosiefienapp/features/attendance/providers/attendance_providers.dart';
 import 'package:abosiefienapp/features/attendance/repository/add_class_attendance_repo.dart';
 import 'package:abosiefienapp/features/attendance/repository/check_box_add_attendance_repo.dart';
 import 'package:dartz/dartz.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart' as intl;
-import 'package:path/path.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
-import 'package:sqflite/sqflite.dart';
 
 import 'package:abosiefienapp/core/utils/app_debug_prints.dart';
 
-part 'check_box_add_attendance_provder.g.dart';
+// NOTE: DataState enum is defined in add_attendance_provider.dart.
+// Import it from there to avoid duplicate definitions.
+import 'package:abosiefienapp/features/attendance/providers/add_attendance_provider.dart'
+    show DataState;
 
-enum DataState { loading, noData, loaded }
+part 'check_box_add_attendance_provder.g.dart';
 
 class CheckBoxAddAttendanceState {
   final List<AddAttendanceModel> data;
@@ -53,8 +54,10 @@ class CheckBoxAddAttendanceState {
 
 @Riverpod(keepAlive: true)
 class CheckBoxAddAttendanceNotifier extends _$CheckBoxAddAttendanceNotifier {
-  final CheckBoxAddAttendanceRepository _repository = CheckBoxAddAttendanceRepository();
-  final AddClassAttendanceRepo addClassAttendanceRepo = AddClassAttendanceRepo();
+  final CheckBoxAddAttendanceRepository _repository =
+      CheckBoxAddAttendanceRepository();
+  final AddClassAttendanceRepo addClassAttendanceRepo =
+      AddClassAttendanceRepo();
   final CustomFunctions customFunctions = CustomFunctions();
 
   @override
@@ -62,18 +65,7 @@ class CheckBoxAddAttendanceNotifier extends _$CheckBoxAddAttendanceNotifier {
     return CheckBoxAddAttendanceState();
   }
 
-  Future<Database> initializeDB() async {
-    String path = await getDatabasesPath();
-    return openDatabase(
-      join(path, 'data.db'),
-      onCreate: (database, version) async {
-        await database.execute(
-          "CREATE TABLE Data (id INTEGER PRIMARY KEY, name TEXT)",
-        );
-      },
-      version: 1,
-    );
-  }
+  // ── Checkbox state (SharedPreferences) ─────────────────────────────────────
 
   Future<void> saveCheckboxState(String stateCheckBox, bool value) async {
     final newStates = Map<String, bool>.from(state.checkboxStates);
@@ -85,83 +77,79 @@ class CheckBoxAddAttendanceNotifier extends _$CheckBoxAddAttendanceNotifier {
   Future<void> loadCheckboxStates() async {
     final newStates = Map<String, bool>.from(state.checkboxStates);
     for (var item in state.data) {
-      String idStr = item.id.toString();
-      bool? val = AppSharedPreferences.getBool(idStr);
+      final idStr = item.id.toString();
+      final val = AppSharedPreferences.getBool(idStr);
       newStates[idStr] = val ?? false;
-        }
+    }
     state = state.copyWith(checkboxStates: newStates);
   }
 
-  Future<void> insertJsonData(List<Map<String, dynamic>> data) async {
-    Database db = await initializeDB();
-    Batch batch = db.batch();
-    for (var item in data) {
-      batch.insert(
-        'Data',
-        {
-          'id': item['id'],
-          'name': item['name']
-        },
-        conflictAlgorithm: ConflictAlgorithm.replace,
-      );
+  Future<void> clearCheckboxStates() async {
+    for (var item in state.data) {
+      await AppSharedPreferences.remove(item.id.toString());
     }
-    await batch.commit();
-    // final List<Map<String, dynamic>> insertedData = await db.query('Data');
-    // print('Data inserted into SQLite: $insertedData');
+    state = state.copyWith(checkboxStates: {});
   }
 
+  // ── Data loading (Realm-backed) ─────────────────────────────────────────────
+
+  /// Fetches names from the API and caches them into Realm via [AttendanceLocalDatasource].
   Future<void> saveJsonData() async {
     state = state.copyWith(dataState: DataState.loading);
 
-    Either<Failure, List<Map<String, dynamic>>> jsonData =
+    final Either<Failure, List<Map<String, dynamic>>> jsonData =
         await _repository.getAllNames();
 
     jsonData.fold(
       (Failure l) {
-        print('Failed to fetch data from repository: $l');
+        printError('Failed to fetch data from repository: $l');
         state = state.copyWith(dataState: DataState.noData);
       },
       (List<Map<String, dynamic>> r) async {
         if (r.isNotEmpty) {
-          await insertJsonData(r);
+          // Convert raw maps to domain models and persist via Realm datasource.
+          final names = r
+              .where((e) => e['id'] != null && e['name'] != null)
+              .map((e) => AddAttendanceModel(
+                    id: e['id'] as int,
+                    name: e['name'] as String,
+                  ))
+              .toList();
+
+          final datasource = ref.read(attendanceLocalDatasourceProvider);
+          datasource.replaceAllNames(names);
+
+          printDone('Cached ${names.length} names into Realm.');
           await retrieveJsonData();
         } else {
-          print('No data fetched from repository to insert into SQLite.');
+          printWarning('No data fetched from repository.');
           state = state.copyWith(dataState: DataState.noData);
         }
       },
     );
   }
 
+  /// Reads names from the Realm cache and loads them into state.
   Future<void> retrieveJsonData() async {
     state = state.copyWith(dataState: DataState.loading);
 
-    Database db = await initializeDB();
-    final List<Map<String, dynamic>> maps = await db.query('Data');
+    final datasource = ref.read(attendanceLocalDatasourceProvider);
 
-    if (maps.isNotEmpty) {
-      print('Data retrieved from SQLite: ${maps.length}');
-      
-      List<AddAttendanceModel> loadedData = maps.map((Map<String, dynamic> item) {
-        return AddAttendanceModel.fromJson(item);
-      }).toList();
+    // Get all cached names from Realm.
+    final cached = datasource.getAllNames();
 
-      state = state.copyWith(data: loadedData);
+    if (cached.isNotEmpty) {
+      printDone('Loaded ${cached.length} names from Realm.');
+      state = state.copyWith(data: cached);
       await loadCheckboxStates();
       state = state.copyWith(dataState: DataState.loaded);
     } else {
-      print('No data found in SQLite.');
+      printWarning('No names found in Realm cache.');
       state = state.copyWith(dataState: DataState.noData);
     }
   }
 
-  Future<void> clearCheckboxStates() async {
-    for (var item in state.data) {
-      await AppSharedPreferences.remove(item.id.toString());
-        }
-    state = state.copyWith(checkboxStates: {});
-  }
-
+  /// Loads from Realm cache first; downloads from API only when cache is empty.
   Future<void> loadDataOnStart() async {
     state = state.copyWith(dataState: DataState.loading);
 
@@ -171,17 +159,16 @@ class CheckBoxAddAttendanceNotifier extends _$CheckBoxAddAttendanceNotifier {
       await saveJsonData();
     }
 
-    if (state.data.isNotEmpty) {
-      state = state.copyWith(dataState: DataState.loaded);
-    } else {
-      state = state.copyWith(dataState: DataState.noData);
-    }
+    state = state.copyWith(
+      dataState: state.data.isNotEmpty ? DataState.loaded : DataState.noData,
+    );
   }
 
+  // ── Date helpers ────────────────────────────────────────────────────────────
+
   void convertToDate() {
-    DateTime dayToday = DateTime.now();
-    String finalFormattedDate =
-        intl.DateFormat('yyyy-MM-dd').format(dayToday).toString();
+    final finalFormattedDate =
+        intl.DateFormat('yyyy-MM-dd').format(DateTime.now());
     printDone('finalFormattedDate $finalFormattedDate');
     state = state.copyWith(attendanceDate: finalFormattedDate);
   }
@@ -190,17 +177,19 @@ class CheckBoxAddAttendanceNotifier extends _$CheckBoxAddAttendanceNotifier {
     state = state.copyWith(attendanceDate: date);
   }
 
+  // ── Submit attendance ───────────────────────────────────────────────────────
+
   Future<bool> addAttendance(BuildContext context) async {
     convertToDate();
     customFunctions.showProgress(context);
 
-    List<int> selectedIds = state.checkboxStates.entries
+    final List<int> selectedIds = state.checkboxStates.entries
         .where((entry) => entry.value == true)
         .map((entry) => int.tryParse(entry.key) ?? 0)
         .where((id) => id != 0)
         .toList();
 
-    Either<Failure, dynamic> response =
+    final Either<Failure, dynamic> response =
         await addClassAttendanceRepo.requestAddAttendance({
       "attendanceDate": state.attendanceDate,
       "makhdomsId": selectedIds,
