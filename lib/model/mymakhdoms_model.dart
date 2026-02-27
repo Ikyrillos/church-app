@@ -95,6 +95,56 @@ class Data {
       this.lastAttendanceDate,
       this.lastCallDate});
 
+  Data copyWith({
+    int? id,
+    String? name,
+    String? phone,
+    String? phone2,
+    String? birthdate,
+    int? addNo,
+    String? addStreet,
+    int? addFloor,
+    String? addBeside,
+    String? father,
+    String? university,
+    String? faculty,
+    int? studentYear,
+    int? khademId,
+    int? groupId,
+    String? notes,
+    int? levelId,
+    int? genderId,
+    String? job,
+    int? socialId,
+    String? lastAttendanceDate,
+    String? lastCallDate,
+  }) {
+    return Data(
+      id: id ?? this.id,
+      name: name ?? this.name,
+      phone: phone ?? this.phone,
+      phone2: phone2 ?? this.phone2,
+      birthdate: birthdate ?? this.birthdate,
+      addNo: addNo ?? this.addNo,
+      addStreet: addStreet ?? this.addStreet,
+      addFloor: addFloor ?? this.addFloor,
+      addBeside: addBeside ?? this.addBeside,
+      father: father ?? this.father,
+      university: university ?? this.university,
+      faculty: faculty ?? this.faculty,
+      studentYear: studentYear ?? this.studentYear,
+      khademId: khademId ?? this.khademId,
+      groupId: groupId ?? this.groupId,
+      notes: notes ?? this.notes,
+      levelId: levelId ?? this.levelId,
+      genderId: genderId ?? this.genderId,
+      job: job ?? this.job,
+      socialId: socialId ?? this.socialId,
+      lastAttendanceDate: lastAttendanceDate ?? this.lastAttendanceDate,
+      lastCallDate: lastCallDate ?? this.lastCallDate,
+    );
+  }
+
   Data.fromJson(Map<String, dynamic> json) {
     id = json['id'];
     name = json['name'];

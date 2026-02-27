@@ -23,7 +23,7 @@ class MakdomList extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final provider = ref.watch(myMakhdomsProvider.notifier);
+    final provider = ref.watch(myMakhdomsNotifierProvider.notifier);
     return makhdom.name != null
         ? ClipRRect(
             borderRadius: BorderRadius.circular(24.0),

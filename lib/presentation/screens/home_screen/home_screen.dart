@@ -21,7 +21,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
   void initState() {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
-      ref.read(homeScreenProvider.notifier).getStoredUser(context);
+      ref.read(homeScreenNotifierProvider.notifier).getStoredUser(context);
     });
   }
 
@@ -29,7 +29,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
   Widget build(BuildContext context) {
     return Consumer(
       builder: (context, ref, child) {
-        final homescreenprovider = ref.watch(homeScreenProvider);
+        final homescreenprovider = ref.watch(homeScreenNotifierProvider);
         return WillPopScope(
           onWillPop: () async {
             SystemChannels.platform.invokeMethod('SystemNavigator.pop');

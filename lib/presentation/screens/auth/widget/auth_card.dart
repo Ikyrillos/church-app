@@ -81,7 +81,7 @@ class _AuthCardState extends ConsumerState<AuthCard> {
                     ),
                     onPressed: () async {
                       if (_formKey.currentState!.validate()) {
-                        await ref.read(loginProvider.notifier).login(
+                        await ref.read(loginNotifierProvider.notifier).login(
                             usernameController.text,
                             passwordController.text,
                             context);

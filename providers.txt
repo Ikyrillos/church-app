@@ -1,8 +1,0 @@
-CheckBoxAddAttendanceProvider
-LoginProvider
-HomeScreenProvider
-MyMakhdomsProvider
-MakhdomDetailsProvider
-AddMakhdomProvider
-AddClassAttendanceProvider
-AddAttendanceProvider

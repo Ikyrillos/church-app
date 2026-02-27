@@ -1,31 +1,28 @@
+import 'package:abosiefienapp/Providers/check_box_add_attendance_provder.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:intl/intl.dart' as intl;
-import 'package:provider/provider.dart';
 
-import '../../../../Providers/check_box_add_attendance_provder.dart';
 import '../../../widgets/app_date_picker_widget.dart';
 
-class CheckBoxAddAttendanceScreen extends StatefulWidget {
+class CheckBoxAddAttendanceScreen extends HookConsumerWidget {
   const CheckBoxAddAttendanceScreen({super.key});
 
   @override
-  CheckBoxAddAttendanceScreenState createState() =>
-      CheckBoxAddAttendanceScreenState();
-}
+  Widget build(BuildContext context, WidgetRef ref) {
+    
+    useEffect(() {
+      Future.microtask(() {
+        ref.read(checkBoxAddAttendanceNotifierProvider.notifier).loadDataOnStart();
+      });
+      return null;
+    }, []);
 
-class CheckBoxAddAttendanceScreenState
-    extends State<CheckBoxAddAttendanceScreen> {
-  @override
-  void initState() {
-    super.initState();
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      context.read<CheckBoxAddAttendanceProvider>().loadDataOnStart();
-    });
-  }
+    final state = ref.watch(checkBoxAddAttendanceNotifierProvider);
+    final notifier = ref.read(checkBoxAddAttendanceNotifierProvider.notifier);
 
-  @override
-  Widget build(BuildContext context) {
     return Scaffold(
       persistentFooterAlignment: AlignmentDirectional.bottomCenter,
       persistentFooterButtons: [
@@ -41,9 +38,7 @@ class CheckBoxAddAttendanceScreenState
             ),
           ),
           onPressed: () {
-            context
-                .read<CheckBoxAddAttendanceProvider>()
-                .addAttendance(context);
+            notifier.addAttendance(context);
           },
           child: const Text(
             'Send',
@@ -58,11 +53,10 @@ class CheckBoxAddAttendanceScreenState
           IconButton(
             onPressed: () async {
               DateTime? selected = await customShowDatePicker(context);
-              context
-                  .read<CheckBoxAddAttendanceProvider>()
-                  .setSelectedAttendanceDate(
-                    intl.DateFormat('yyyy-MM-dd').format(selected!),
-                  );
+              if (selected != null) {
+                 final formattedDate = intl.DateFormat('yyyy-MM-dd').format(selected);
+                 ref.read(checkBoxAddAttendanceNotifierProvider.notifier).setSelectedAttendanceDate(formattedDate);
+              }
             },
             icon: Icon(
               Icons.date_range,
@@ -72,7 +66,7 @@ class CheckBoxAddAttendanceScreenState
           ),
           IconButton(
             onPressed: () {
-              context.read<CheckBoxAddAttendanceProvider>().loadDataOnStart();
+              notifier.loadDataOnStart();
             },
             icon: const Icon(
               Icons.download,
@@ -81,9 +75,9 @@ class CheckBoxAddAttendanceScreenState
           ),
         ],
       ),
-      body: Consumer<CheckBoxAddAttendanceProvider>(
-        builder: (context, CheckBoxAddAttendanceProvider provider, child) {
-          switch (provider.dataState) {
+      body: Builder(
+        builder: (context) {
+          switch (state.dataState) {
             case DataState.loading:
               return const Center(child: CircularProgressIndicator());
             case DataState.noData:
@@ -94,14 +88,14 @@ class CheckBoxAddAttendanceScreenState
                 ),
               );
             case DataState.loaded:
-              if (provider.names.isNotEmpty) {
+              if (state.data.isNotEmpty) {
                 return ListView.builder(
                   itemExtent: 80,
-                  itemCount: provider.names.length,
+                  itemCount: state.data.length,
                   itemBuilder: (BuildContext context, int index) {
-                    String name = provider.names[index];
-                    String id = provider.ids[index]
-                        .toString(); // Convert the id to a String
+                    final item = state.data[index];
+                    String name = item.name ?? '';
+                    String id = item.id.toString();
 
                     return Container(
                       alignment: Alignment.center,
@@ -112,15 +106,14 @@ class CheckBoxAddAttendanceScreenState
                         color: const Color(0xffF8EDED),
                       ),
                       child: CheckboxListTile(
-                        subtitle: Text(provider.attendanceDate ??
-                            intl.DateFormat('yyyy-MM-dd')
-                                .format(DateTime.now())
-                                .toString()),
-                        value: provider.checkboxStates[id] ??
-                            false, // Use the ID as a string here
+                        subtitle: Text(
+                            state.attendanceDate.isNotEmpty 
+                            ? state.attendanceDate 
+                            : intl.DateFormat('yyyy-MM-dd').format(DateTime.now()).toString()
+                        ),
+                        value: state.checkboxStates[id] ?? false,
                         onChanged: (value) {
-                          provider.saveCheckboxState(
-                              id, value ?? false); // Save state with string ID
+                          notifier.saveCheckboxState(id, value ?? false);
                         },
                         title: Text(
                           name,
@@ -143,14 +136,6 @@ class CheckBoxAddAttendanceScreenState
                   ),
                 );
               }
-
-            default:
-              return const Center(
-                child: Text(
-                  'Unknown state',
-                  style: TextStyle(color: Colors.red),
-                ),
-              );
           }
         },
       ),

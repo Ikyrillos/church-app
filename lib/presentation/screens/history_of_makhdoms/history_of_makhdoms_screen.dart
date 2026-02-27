@@ -12,7 +12,7 @@ class HistoryOfMakhdomsScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Consumer(builder: (context, ref, child) {
-      final homeScreenProviderVar = ref.watch(homeScreenProvider);
+      final homeScreenProviderVar = ref.watch(homeScreenNotifierProvider);
       return Scaffold(
         appBar: AppBar(
           title: Text(

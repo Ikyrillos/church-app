@@ -1,27 +1,27 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 
-part of 'add_makhdom_provider.dart';
+part of 'add_class_attendance_provider.dart';
 
 // **************************************************************************
 // RiverpodGenerator
 // **************************************************************************
 
-String _$addMakhdomNotifierHash() =>
-    r'ac8ffd1005da04fd9b0cb869629ec6cb2ad1e5c7';
+String _$addClassAttendanceNotifierHash() =>
+    r'48eb253cef013269b7be599901c8df85b63cdcd3';
 
-/// See also [AddMakhdomNotifier].
-@ProviderFor(AddMakhdomNotifier)
-final addMakhdomNotifierProvider =
-    NotifierProvider<AddMakhdomNotifier, AddMakhdomState>.internal(
-  AddMakhdomNotifier.new,
-  name: r'addMakhdomNotifierProvider',
+/// See also [AddClassAttendanceNotifier].
+@ProviderFor(AddClassAttendanceNotifier)
+final addClassAttendanceNotifierProvider = NotifierProvider<
+    AddClassAttendanceNotifier, AddClassAttendanceState>.internal(
+  AddClassAttendanceNotifier.new,
+  name: r'addClassAttendanceNotifierProvider',
   debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
       ? null
-      : _$addMakhdomNotifierHash,
+      : _$addClassAttendanceNotifierHash,
   dependencies: null,
   allTransitiveDependencies: null,
 );
 
-typedef _$AddMakhdomNotifier = Notifier<AddMakhdomState>;
+typedef _$AddClassAttendanceNotifier = Notifier<AddClassAttendanceState>;
 // ignore_for_file: type=lint
 // ignore_for_file: subtype_of_sealed_class, invalid_use_of_internal_member, invalid_use_of_visible_for_testing_member, deprecated_member_use_from_same_package

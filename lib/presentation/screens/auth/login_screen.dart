@@ -20,7 +20,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
   @override
   void initState() {
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
-      ref.read(loginProvider.notifier).getAPKVersion();
+      ref.read(loginNotifierProvider.notifier).getAPKVersion();
     });
     super.initState();
   }
@@ -28,7 +28,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
   @override
   Widget build(BuildContext context) {
     final deviceSize = MediaQuery.of(context).size;
-    var loginState = ref.watch(loginProvider);
+    var loginState = ref.watch(loginNotifierProvider);
     return Scaffold(
       bottomNavigationBar: Padding(
         padding: EdgeInsets.symmetric(vertical: 12.h),
