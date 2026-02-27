@@ -141,18 +141,15 @@ class MyMakhdomsNotifier extends _$MyMakhdomsNotifier {
       try {
         launchUrl(Uri.parse(url()));
       } catch (error) {
-        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(error.toString()),
             behavior: SnackBarBehavior.floating,
-            backgroundColor: Colors.red,
-            content: Text(
-              error.toString(),
-              textDirection: TextDirection.rtl,
-              style: AppStylesUtil.textRegularStyle(
-                18,
-                Colors.white,
-                FontWeight.w400,
-              ),
-            )));
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(12.0)), // AppTheme.radiusM
+            backgroundColor: Theme.of(context).colorScheme.errorContainer,
+          ),
+        );
       }
     }
   }

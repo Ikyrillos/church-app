@@ -1,99 +1,97 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_hooks/flutter_hooks.dart';
+import 'package:hooks_riverpod/hooks_riverpod.dart';
 
 import 'package:abosiefienapp/features/auth/providers/login_provider.dart';
-import 'package:abosiefienapp/core/theme/app_styles_util.dart';
+import 'package:abosiefienapp/core/theme/app_theme.dart';
 
-class AuthCard extends ConsumerStatefulWidget {
-  const AuthCard({
-    super.key,
-  });
+class AuthCard extends HookConsumerWidget {
+  const AuthCard({super.key});
 
   @override
-  _AuthCardState createState() => _AuthCardState();
-}
-
-class _AuthCardState extends ConsumerState<AuthCard> {
-  final GlobalKey<FormState> _formKey = GlobalKey();
-  TextEditingController usernameController = TextEditingController();
-  TextEditingController passwordController = TextEditingController();
-  final bool isConnected = false;
-
-  @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     final deviceSize = MediaQuery.of(context).size;
+    final usernameController = useTextEditingController();
+    final passwordController = useTextEditingController();
+    final formKey = useMemoized(() => GlobalKey<FormState>());
+    final isLoading = useState(false);
+    final isPasswordVisible = useState(false);
+
     return Card(
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(10.0),
-      ),
-      elevation: 8.0,
       child: Container(
-        height: 240,
-        color: Colors.white,
-        constraints: const BoxConstraints(minHeight: 240),
         width: deviceSize.width * 0.75,
-        padding: const EdgeInsets.all(16.0),
+        padding: const EdgeInsets.all(AppTheme.spacingM),
         child: Directionality(
           textDirection: TextDirection.rtl,
           child: Form(
-            key: _formKey,
+            key: formKey,
             child: SingleChildScrollView(
               child: Column(
                 children: <Widget>[
                   TextFormField(
                     controller: usernameController,
                     textDirection: TextDirection.rtl,
-                    decoration:
-                        const InputDecoration(labelText: 'إسم المستخدم'),
-                    keyboardType: TextInputType.emailAddress,
+                    decoration: const InputDecoration(labelText: 'إسم المستخدم'),
+                    keyboardType: TextInputType.text,
+                    textInputAction: TextInputAction.next,
                     validator: (value) {
-                      if (value!.isEmpty) {
+                      if (value == null || value.isEmpty) {
                         return 'إسم المستخدم خطأ';
                       }
                       return null;
                     },
                   ),
+                  const SizedBox(height: AppTheme.spacingM),
                   TextFormField(
                     textDirection: TextDirection.rtl,
-                    decoration: const InputDecoration(labelText: 'كلمة السر'),
-                    obscureText: true,
+                    decoration: InputDecoration(
+                      labelText: 'كلمة السر',
+                      suffixIcon: IconButton(
+                        icon: Icon(
+                          isPasswordVisible.value ? Icons.visibility : Icons.visibility_off,
+                        ),
+                        onPressed: () {
+                          isPasswordVisible.value = !isPasswordVisible.value;
+                        },
+                      ),
+                    ),
+                    obscureText: !isPasswordVisible.value,
                     controller: passwordController,
+                    textInputAction: TextInputAction.done,
                     validator: (value) {
-                      if (value!.isEmpty) {
+                      if (value == null || value.isEmpty) {
                         return 'كلمة السر خطأ';
                       }
                       return null;
                     },
                   ),
-                  const SizedBox(
-                    height: 20,
-                  ),
-                  ElevatedButton(
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.deepOrange.shade900,
-                      padding: const EdgeInsets.symmetric(
-                          horizontal: 20.0, vertical: 8.0),
-                      shape: const RoundedRectangleBorder(
-                        borderRadius: BorderRadius.all(
-                          Radius.circular(20.0),
-                        ),
-                      ),
-                    ),
-                    onPressed: () async {
-                      if (_formKey.currentState!.validate()) {
-                        await ref.read(loginNotifierProvider.notifier).login(
-                            usernameController.text,
-                            passwordController.text,
-                            context);
-                      }
-                    },
-                    child: Text(
-                      'تسجيل الدخول',
-                      style: AppStylesUtil.textRegularStyle(
-                        16,
-                        Colors.white,
-                        FontWeight.w400,
-                      ),
+                  const SizedBox(height: AppTheme.spacingL),
+                  SizedBox(
+                    width: double.infinity,
+                    child: FilledButton(
+                      onPressed: isLoading.value ? null : () async {
+                        if (formKey.currentState!.validate()) {
+                          isLoading.value = true;
+                          try {
+                            await ref.read(loginNotifierProvider.notifier).login(
+                                usernameController.text,
+                                passwordController.text,
+                                context);
+                          } finally {
+                            if (context.mounted) {
+                               isLoading.value = false;
+                            }
+                          }
+                        }
+                      },
+                      child: isLoading.value
+                          ? const SizedBox(
+                              width: 24,
+                              height: 24,
+                              child: CircularProgressIndicator(strokeWidth: 2),
+                            )
+                          : const Text('تسجيل الدخول'),
                     ),
                   ),
                 ],

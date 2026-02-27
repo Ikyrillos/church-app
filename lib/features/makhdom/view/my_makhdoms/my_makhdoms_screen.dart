@@ -3,104 +3,105 @@ import 'package:abosiefienapp/core/widgets/mkhdom_list.dart';
 import 'package:abosiefienapp/core/widgets/search_section_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:abosiefienapp/core/theme/app_styles_util.dart';
+import 'package:abosiefienapp/core/theme/app_theme.dart';
 import 'package:abosiefienapp/core/utils/app_debug_prints.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_hooks/flutter_hooks.dart';
+import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 // SEGIL AL MAKHDOMEN
-class MyMakhdomsScreen extends ConsumerStatefulWidget {
+class MyMakhdomsScreen extends HookConsumerWidget {
   const MyMakhdomsScreen({super.key});
 
   @override
-  ConsumerState<MyMakhdomsScreen> createState() => _MyMakhdomsScreenState();
-}
+  Widget build(BuildContext context, WidgetRef ref) {
+    useEffect(() {
+      Future.microtask(() =>
+        ref.read(myMakhdomsNotifierProvider.notifier).myMakhdoms(context)
+          .then((value) => printDone('Done')));
+      return null;
+    }, const []);
 
-class _MyMakhdomsScreenState extends ConsumerState<MyMakhdomsScreen> {
-  @override
-  void initState() {
-    callMyMakhdomsApi();
-    super.initState();
-  }
-
-  Future<void> callMyMakhdomsApi() async {
-    Future.delayed(Duration.zero, () {
-      ref
-          .read(myMakhdomsNotifierProvider.notifier)
-          .myMakhdoms(context)
-          .then((value) => printDone('Done'));
-    });
-  }
-
-  @override
-  Widget build(BuildContext context) {
     final mymakhdomsState = ref.watch(myMakhdomsNotifierProvider);
     final mymakhdomsNotifier = ref.read(myMakhdomsNotifierProvider.notifier);
 
     return Scaffold(
-      bottomNavigationBar: Card(
-        elevation: 10,
-        shadowColor: Colors.grey,
-        margin: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
-        child: Container(
+      bottomNavigationBar: BottomAppBar(
+        child: SizedBox(
           height: 40,
           width: double.infinity,
-          padding: const EdgeInsets.all(5),
           child: Text(
-            "إجمالى العدد : ${mymakhdomsState.allMakhdoms.length}", //provider.allMakhdoms?.length
-            style: AppStylesUtil.textRegularStyle(
-                20.0, Colors.black, FontWeight.w500),
+            "إجمالى العدد : ${mymakhdomsState.allMakhdoms.length}",
+            style: Theme.of(context).textTheme.titleMedium,
             textAlign: TextAlign.end,
           ),
         ),
       ),
       appBar: AppBar(
-        title: Text(
-          "سجل المخدومين",
-          style: AppStylesUtil.textRegularStyle(
-              20.0, Colors.black, FontWeight.w500),
-        ),
+        title: const Text("سجل المخدومين"),
         actions: [
           IconButton(
               icon: const Icon(Icons.refresh),
               onPressed: () {
-                // CALL LIST OF MAKHDOMS AGAIEN
                 mymakhdomsNotifier.myMakhdoms(context);
               })
         ],
       ),
-      body: mymakhdomsState.listLength == 0
-          ? Container()
-          : Padding(
-              padding: EdgeInsets.symmetric(vertical: 20.h, horizontal: 20.w),
-              child: Column(
-                children: [
-                  SearchSectionWidget(
-                      controller: mymakhdomsNotifier.searchController,
-                      filtervisibility: true,
-                      onChanged: (value) {
-                        mymakhdomsNotifier.filterSearchResults(value);
-                      }),
-                  Expanded(
-                    child: Container(
-                      margin: const EdgeInsets.symmetric(vertical: 10),
-                      child: ListView.builder(
-                        itemCount: mymakhdomsState.items.length,
-                        itemBuilder: (ctx, index) {
-                          return MakdomList(
-                            mymakhdomsState.items[index],
-                            Icons.phone,
-                            () => launchUrl(Uri.parse(
-                                'tel://${mymakhdomsState.items[index].phone}')), //provider.allMakhdoms![index].phone
-                            false,
-                          );
-                        },
-                      ),
-                    ),
+      body: _buildBody(context, mymakhdomsState, mymakhdomsNotifier),
+    );
+  }
+
+  Widget _buildBody(BuildContext context, dynamic mymakhdomsState, dynamic mymakhdomsNotifier) {
+    if (mymakhdomsState.isLoading == true) {
+      return const Center(child: CircularProgressIndicator());
+    } else if (mymakhdomsState.allMakhdoms.isEmpty) {
+      return Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Icon(Icons.people_outline, size: 64, color: Theme.of(context).colorScheme.outline),
+            const SizedBox(height: AppTheme.spacingM),
+            Text('لا يوجد مخدومين', style: Theme.of(context).textTheme.bodyLarge)
+          ],
+        ),
+      );
+    } else {
+      return Padding(
+        padding: EdgeInsets.symmetric(vertical: 20.h, horizontal: 20.w),
+        child: Column(
+          children: [
+            SearchSectionWidget(
+                controller: mymakhdomsNotifier.searchController,
+                filtervisibility: true,
+                onChanged: (value) {
+                  mymakhdomsNotifier.filterSearchResults(value);
+                }),
+            Expanded(
+              child: Container(
+                margin: const EdgeInsets.symmetric(vertical: 10),
+                child: RefreshIndicator(
+                  onRefresh: () async {
+                    await mymakhdomsNotifier.myMakhdoms(context);
+                  },
+                  child: ListView.builder(
+                    itemCount: mymakhdomsState.items.length,
+                    itemBuilder: (ctx, index) {
+                      return MakdomList(
+                        mymakhdomsState.items[index],
+                        Icons.phone,
+                        () => launchUrl(Uri.parse(
+                            'tel://${mymakhdomsState.items[index].phone}')),
+                        false,
+                      );
+                    },
                   ),
-                ],
+                ),
               ),
             ),
-    );
+          ],
+        ),
+      );
+    }
   }
 }
