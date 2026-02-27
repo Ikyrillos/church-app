@@ -125,122 +125,47 @@ class AddAttendanceScreen extends HookConsumerWidget {
       ),
 
       // ── Body ───────────────────────────────────────────────────────────────
-      body: Column(
-        children: [
-          // ── Top controls: points + date ─────────────────────────────────
-          Padding(
-            padding: EdgeInsets.symmetric(
-                horizontal: AppTheme.spacingM, vertical: 8.h),
-            child: Row(
-              children: [
-                InputFieldWidget(
-                  labeltext: 'نقاط',
-                  width: 100.w,
-                  height: 40,
-                  controller: pointsController,
-                  keyboardType: TextInputType.number,
-                  textInputAction: TextInputAction.next,
-                  lines: 1,
-                  obscure: false,
-                  textAlign: TextAlign.start,
-                ),
-                const SizedBox(width: 8),
-                Expanded(
-                  child: OutlinedButton.icon(
-                    onPressed: () async {
-                      final selected = await customShowDatePicker(context);
-                      if (selected != null) {
-                        notifier.setSelectedAttendanceDate(
-                            intl.DateFormat('yyyy-MM-dd').format(selected));
-                      }
-                    },
-                    icon: const Icon(Icons.date_range_rounded, size: 18),
-                    label: Text(
-                      state.attendanceDate.isEmpty
-                          ? 'اختيار التاريخ'
-                          : state.attendanceDate,
-                      overflow: TextOverflow.ellipsis,
-                    ),
-                    style: OutlinedButton.styleFrom(
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(AppTheme.radiusM),
-                      ),
-                    ),
-                  ),
-                ),
-              ],
-            ),
-          ),
-
-          const Divider(height: 1),
-
-          // ── Autocomplete name search ────────────────────────────────────
-          Padding(
-            padding: EdgeInsets.symmetric(
-                horizontal: AppTheme.spacingM, vertical: 6.h),
-            child: _NameAutocomplete(
-              controller: nameController,
-              suggestions: state.suggestions,
-              onQueryChanged: notifier.searchByName,
-              onSelected: (item) {
-                notifier.addFromAutocomplete(item);
-                nameController.clear();
-              },
-            ),
-          ),
-
-          // ── Code search toggle ──────────────────────────────────────────
-          Padding(
-            padding: EdgeInsets.symmetric(horizontal: AppTheme.spacingM),
-            child: Row(
-              children: [
-                TextButton.icon(
-                  icon: Icon(
-                    showCodeSearch.value
-                        ? Icons.keyboard_arrow_up
-                        : Icons.keyboard_arrow_down,
-                    size: 18,
-                  ),
-                  label: Text(
-                    showCodeSearch.value ? 'إخفاء بحث الكود' : 'بحث بالكود',
-                    style: TextStyle(fontSize: 13.sp),
-                  ),
-                  onPressed: () => showCodeSearch.value = !showCodeSearch.value,
-                ),
-              ],
-            ),
-          ),
-          if (showCodeSearch.value)
+      body: SafeArea(
+        child: Column(
+          children: [
+            // ── Top controls: points + date ─────────────────────────────────
             Padding(
               padding: EdgeInsets.symmetric(
-                  horizontal: AppTheme.spacingM, vertical: 4.h),
+                  horizontal: AppTheme.spacingM, vertical: 8.h),
               child: Row(
                 children: [
-                  FilledButton(
-                    style: FilledButton.styleFrom(
-                      minimumSize: Size(90.w, 44),
-                    ),
-                    onPressed: () {
-                      notifier.validateAndAdd(context, codeController.text);
-                      codeController.clear();
-                    },
-                    child: const Text('إضافة'),
+                  InputFieldWidget(
+                    labeltext: 'نقاط',
+                    width: 100.w,
+                    height: 40,
+                    controller: pointsController,
+                    keyboardType: TextInputType.number,
+                    textInputAction: TextInputAction.next,
+                    lines: 1,
+                    obscure: false,
+                    textAlign: TextAlign.start,
                   ),
                   const SizedBox(width: 8),
                   Expanded(
-                    child: InputFieldWidget(
-                      labeltext: 'كود المخدوم',
-                      width: double.infinity,
-                      height: 44,
-                      controller: codeController,
-                      keyboardType: TextInputType.number,
-                      textInputAction: TextInputAction.done,
-                      lines: 1,
-                      obscure: false,
-                      textAlign: TextAlign.start,
-                      prefix: IconButton(
-                        onPressed: notifier.scanCode,
-                        icon: const Icon(Icons.qr_code_scanner_rounded),
+                    child: OutlinedButton.icon(
+                      onPressed: () async {
+                        final selected = await customShowDatePicker(context);
+                        if (selected != null) {
+                          notifier.setSelectedAttendanceDate(
+                              intl.DateFormat('yyyy-MM-dd').format(selected));
+                        }
+                      },
+                      icon: const Icon(Icons.date_range_rounded, size: 18),
+                      label: Text(
+                        state.attendanceDate.isEmpty
+                            ? 'اختيار التاريخ'
+                            : state.attendanceDate,
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                      style: OutlinedButton.styleFrom(
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(AppTheme.radiusM),
+                        ),
                       ),
                     ),
                   ),
@@ -248,65 +173,144 @@ class AddAttendanceScreen extends HookConsumerWidget {
               ),
             ),
 
-          const Divider(height: 1),
+            const Divider(height: 1),
 
-          // ── Attendance session list ─────────────────────────────────────
-          Expanded(
-            child: state.localAttendanceMakhdoms.isEmpty
-                ? Center(
-                    child: Column(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        Icon(Icons.people_outline,
-                            size: 56, color: Colors.grey.shade400),
-                        const SizedBox(height: 8),
-                        Text(
-                          'ابدأ بكتابة الاسم في حقل البحث',
-                          style: TextStyle(
-                              color: Colors.grey.shade500, fontSize: 14.sp),
-                        ),
-                      ],
+            // ── Autocomplete name search ────────────────────────────────────
+            Padding(
+              padding: EdgeInsets.symmetric(
+                  horizontal: AppTheme.spacingM, vertical: 6.h),
+              child: _NameAutocomplete(
+                controller: nameController,
+                suggestions: state.suggestions,
+                onQueryChanged: notifier.searchByName,
+                onSelected: (item) {
+                  notifier.addFromAutocomplete(item);
+                  nameController.clear();
+                },
+              ),
+            ),
+
+            // ── Code search toggle ──────────────────────────────────────────
+            Padding(
+              padding: EdgeInsets.symmetric(horizontal: AppTheme.spacingM),
+              child: Row(
+                children: [
+                  TextButton.icon(
+                    icon: Icon(
+                      showCodeSearch.value
+                          ? Icons.keyboard_arrow_up
+                          : Icons.keyboard_arrow_down,
+                      size: 18,
                     ),
-                  )
-                : ListView.builder(
-                    padding: EdgeInsets.symmetric(
-                        horizontal: AppTheme.spacingM, vertical: 8.h),
-                    itemCount: state.localAttendanceMakhdoms.length,
-                    itemBuilder: (context, index) {
-                      final item = state.localAttendanceMakhdoms[index];
-                      return Card(
-                        margin: const EdgeInsets.symmetric(
-                            vertical: AppTheme.spacingXs),
-                        child: ListTile(
-                          leading: CircleAvatar(
-                            backgroundColor:
-                                Theme.of(context).colorScheme.primaryContainer,
-                            child: Text(
-                              '${index + 1}',
-                              style: TextStyle(
-                                color: Theme.of(context)
-                                    .colorScheme
-                                    .onPrimaryContainer,
-                                fontWeight: FontWeight.bold,
+                    label: Text(
+                      showCodeSearch.value ? 'إخفاء بحث الكود' : 'بحث بالكود',
+                      style: TextStyle(fontSize: 13.sp),
+                    ),
+                    onPressed: () =>
+                        showCodeSearch.value = !showCodeSearch.value,
+                  ),
+                ],
+              ),
+            ),
+            if (showCodeSearch.value)
+              Padding(
+                padding: EdgeInsets.symmetric(
+                    horizontal: AppTheme.spacingM, vertical: 4.h),
+                child: Row(
+                  children: [
+                    FilledButton(
+                      style: FilledButton.styleFrom(
+                        minimumSize: Size(90.w, 44),
+                      ),
+                      onPressed: () {
+                        notifier.validateAndAdd(context, codeController.text);
+                        codeController.clear();
+                      },
+                      child: const Text('إضافة'),
+                    ),
+                    const SizedBox(width: 8),
+                    Expanded(
+                      child: InputFieldWidget(
+                        labeltext: 'كود المخدوم',
+                        width: double.infinity,
+                        height: 44,
+                        controller: codeController,
+                        keyboardType: TextInputType.number,
+                        textInputAction: TextInputAction.done,
+                        lines: 1,
+                        obscure: false,
+                        textAlign: TextAlign.start,
+                        prefix: IconButton(
+                          onPressed: notifier.scanCode,
+                          icon: const Icon(Icons.qr_code_scanner_rounded),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+
+            const Divider(height: 1),
+
+            // ── Attendance session list ─────────────────────────────────────
+            Expanded(
+              child: state.localAttendanceMakhdoms.isEmpty
+                  ? Center(
+                      child: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Icon(Icons.people_outline,
+                              size: 56, color: Colors.grey.shade400),
+                          const SizedBox(height: 8),
+                          Text(
+                            'ابدأ بكتابة الاسم في حقل البحث',
+                            style: TextStyle(
+                                color: Colors.grey.shade500, fontSize: 14.sp),
+                          ),
+                        ],
+                      ),
+                    )
+                  : ListView.builder(
+                      padding: EdgeInsets.symmetric(
+                          horizontal: AppTheme.spacingM, vertical: 8.h),
+                      itemCount: state.localAttendanceMakhdoms.length,
+                      itemBuilder: (context, index) {
+                        final item = state.localAttendanceMakhdoms[index];
+                        return Card(
+                          margin: const EdgeInsets.symmetric(
+                              vertical: AppTheme.spacingXs),
+                          child: ListTile(
+                            leading: CircleAvatar(
+                              backgroundColor: Theme.of(context)
+                                  .colorScheme
+                                  .primaryContainer,
+                              child: Text(
+                                '${index + 1}',
+                                style: TextStyle(
+                                  color: Theme.of(context)
+                                      .colorScheme
+                                      .onPrimaryContainer,
+                                  fontWeight: FontWeight.bold,
+                                ),
                               ),
                             ),
+                            title: Text(item.name,
+                                style: const TextStyle(
+                                    fontWeight: FontWeight.w600)),
+                            subtitle: Text('ID: ${item.id}'),
+                            trailing: IconButton(
+                              icon: Icon(Icons.remove_circle_outline,
+                                  color: Theme.of(context).colorScheme.error),
+                              onPressed: () =>
+                                  _confirmRemove(context, notifier, item),
+                            ),
                           ),
-                          title: Text(item.name,
-                              style:
-                                  const TextStyle(fontWeight: FontWeight.w600)),
-                          subtitle: Text('ID: ${item.id}'),
-                          trailing: IconButton(
-                            icon: Icon(Icons.remove_circle_outline,
-                                color: Theme.of(context).colorScheme.error),
-                            onPressed: () =>
-                                _confirmRemove(context, notifier, item),
-                          ),
-                        ),
-                      );
-                    },
-                  ),
-          ),
-        ],
+                        );
+                      },
+                    ),
+            ),
+          ],
+        ),
       ),
     );
   }
@@ -386,7 +390,10 @@ class _NameAutocompleteState extends State<_NameAutocomplete> {
   void didUpdateWidget(_NameAutocomplete oldWidget) {
     super.didUpdateWidget(oldWidget);
     if (oldWidget.suggestions != widget.suggestions) {
-      _updateOverlay();
+      // Defer overlay update to avoid calling setState/insert during build.
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (mounted) _updateOverlay();
+      });
     }
   }
 

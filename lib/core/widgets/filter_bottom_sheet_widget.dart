@@ -7,7 +7,6 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:intl/intl.dart' as intl;
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import 'package:abosiefienapp/core/theme/app_styles_util.dart';
 import 'package:abosiefienapp/core/utils/app_debug_prints.dart';
 
 class FilterBottomSheetWidget extends ConsumerWidget {
@@ -17,6 +16,9 @@ class FilterBottomSheetWidget extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final myMakhdomsState = ref.watch(myMakhdomsNotifierProvider);
     final myMakhdomsNotifier = ref.read(myMakhdomsNotifierProvider.notifier);
+    final colorScheme = Theme.of(context).colorScheme;
+    final textTheme = Theme.of(context).textTheme;
+
     return Directionality(
       textDirection: TextDirection.rtl,
       child: Padding(
@@ -27,45 +29,42 @@ class FilterBottomSheetWidget extends ConsumerWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             mainAxisAlignment: MainAxisAlignment.start,
             children: [
+              // ── Header ───────────────────────────────────────────────────
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   Text(
                     'ترتيب وفرز',
-                    style: AppStylesUtil.textBoldStyle(
-                        20, Colors.black, FontWeight.bold),
+                    style: textTheme.titleLarge?.copyWith(
+                      fontWeight: FontWeight.bold,
+                    ),
                   ),
                   IconButton(
-                      onPressed: () {
-                        Navigator.pop(context);
-                      },
-                      icon: const Icon(
-                        Icons.close,
-                        size: 26,
-                      ))
+                    onPressed: () => Navigator.pop(context),
+                    icon: const Icon(Icons.close, size: 26),
+                  ),
                 ],
               ),
-              const Divider(
-                color: Colors.black26,
-                thickness: 1,
-              ),
+              const Divider(thickness: 1),
+
+              // ── Sort options ──────────────────────────────────────────────
               MultiRadioWidget(
-                  checkedIncome: false,
-                  radioValue: myMakhdomsState.sortValue,
-                  title1: 'ترتيب',
-                  title2: 'الإسم',
-                  title3: 'الشارع',
-                  title4: 'اخر حضور',
-                  title5: '',
-                  color: Colors.black,
-                  onChanged: (value) {
-                    myMakhdomsNotifier.setSelectedSortColumn(value);
-                  }),
-              const ArrangeSectionWidget(),
-              const Divider(
-                color: Colors.black26,
-                thickness: 1,
+                checkedIncome: false,
+                radioValue: myMakhdomsState.sortValue,
+                title1: 'ترتيب',
+                title2: 'الإسم',
+                title3: 'الشارع',
+                title4: 'اخر حضور',
+                title5: '',
+                color: colorScheme.onSurface,
+                onChanged: (value) {
+                  myMakhdomsNotifier.setSelectedSortColumn(value);
+                },
               ),
+              const ArrangeSectionWidget(),
+              const Divider(thickness: 1),
+
+              // ── Filter section ────────────────────────────────────────────
               Padding(
                 padding: EdgeInsets.only(left: 10.w, right: 10.w, bottom: 40.h),
                 child: Column(
@@ -74,117 +73,74 @@ class FilterBottomSheetWidget extends ConsumerWidget {
                     Text(
                       'فرز',
                       textDirection: TextDirection.rtl,
-                      style: AppStylesUtil.textBoldStyle(
-                          20, Colors.black, FontWeight.bold),
+                      style: textTheme.titleLarge?.copyWith(
+                        fontWeight: FontWeight.bold,
+                      ),
                     ),
-                    SizedBox(
-                      height: 20.h,
-                    ),
+                    SizedBox(height: 20.h),
                     Text(
                       'تاريخ الغياب',
                       textDirection: TextDirection.rtl,
-                      style: AppStylesUtil.textBoldStyle(
-                          18, Colors.black, FontWeight.normal),
+                      style: textTheme.titleMedium,
                     ),
+                    SizedBox(height: 12.h),
+                    // ── Material 3 date picker trigger ──────────────────────
                     SizedBox(
-                      height: 12.h,
-                    ),
-                    Container(
-                      width: MediaQuery.of(context).size.width - 40,
-                      height: 40.h,
-                      padding: EdgeInsets.symmetric(horizontal: 20.w),
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(10.sp),
-                        border: Border.all(
-                          color: Colors.blue,
-                          width: 2.0,
+                      width: double.infinity,
+                      child: OutlinedButton.icon(
+                        icon:
+                            const Icon(Icons.calendar_today_rounded, size: 18),
+                        label: Text(
+                          myMakhdomsState.absentDate.isEmpty
+                              ? 'اختر تاريخ الغياب'
+                              : myMakhdomsState.absentDate,
                         ),
-                      ),
-                      child: InkWell(
-                        onTap: () async {
-                          DateTime? selected =
+                        onPressed: () async {
+                          final DateTime? selected =
                               await customShowDatePicker(context);
+                          if (selected == null) return;
                           myMakhdomsNotifier.setSelectedAbsentDate(
-                              intl.DateFormat('yyyy-MM-dd').format(selected!));
+                              intl.DateFormat('yyyy-MM-dd').format(selected));
                           printDone(
                               'ABSENT DATE Updated ${myMakhdomsState.absentDate}');
                         },
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            Text(
-                              myMakhdomsState.absentDate == ''
-                                  ? 'اختر تاريخ الغياب'
-                                  : myMakhdomsState.absentDate,
-                              style: AppStylesUtil.textBoldStyle(
-                                12.sp,
-                                Colors.black,
-                                FontWeight.w400,
-                              ),
-                            ),
-                            Icon(
-                              Icons.date_range,
-                              color: Colors.blue,
-                              size: 20.sp,
-                            ),
-                          ],
+                        style: OutlinedButton.styleFrom(
+                          alignment: AlignmentDirectional.centerStart,
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 16, vertical: 14),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(12),
+                          ),
                         ),
                       ),
                     ),
-                    const Divider(
-                      color: Colors.black26,
-                      thickness: 1,
-                    ),
+                    const Divider(thickness: 1),
                   ],
                 ),
               ),
+
+              // ── Action buttons ────────────────────────────────────────────
               Align(
                 alignment: Alignment.bottomCenter,
                 child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    ElevatedButton(
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.blue,
-                        fixedSize: Size(220.w, 40.h),
-                        padding: const EdgeInsets.symmetric(
-                            horizontal: 20.0, vertical: 8.0),
-                        shape: const RoundedRectangleBorder(
-                          borderRadius: BorderRadius.all(
-                            Radius.circular(20.0),
-                          ),
-                        ),
+                    Expanded(
+                      child: FilledButton(
+                        onPressed: () {
+                          myMakhdomsNotifier.myMakhdoms(context).then((value) {
+                            if (value == true) {
+                              Navigator.pop(context);
+                              myMakhdomsNotifier.clearFilterDate();
+                            }
+                          });
+                        },
+                        child: const Text('بحث'),
                       ),
-                      child: Text('بحــــث',
-                          style: AppStylesUtil.textRegularStyle(
-                              20, Colors.white, FontWeight.bold)),
-                      onPressed: () {
-                        myMakhdomsNotifier.myMakhdoms(context).then((value) {
-                          if (value == true) {
-                            Navigator.pop(context);
-                            myMakhdomsNotifier.clearFilterDate();
-                          }
-                        });
-                      },
                     ),
-                    ElevatedButton(
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.white,
-                        fixedSize: Size(100.w, 40.h),
-                        padding: const EdgeInsets.symmetric(
-                            horizontal: 4.0, vertical: 8.0),
-                        shape: const RoundedRectangleBorder(
-                          borderRadius: BorderRadius.all(
-                            Radius.circular(20.0),
-                          ),
-                        ),
-                      ),
-                      child: Text('مسح الكل',
-                          style: AppStylesUtil.textRegularStyle(
-                              14.sp, Colors.blue, FontWeight.w500)),
-                      onPressed: () {
-                        myMakhdomsNotifier.clearFilterDate();
-                      },
+                    const SizedBox(width: 12),
+                    TextButton(
+                      onPressed: () => myMakhdomsNotifier.clearFilterDate(),
+                      child: const Text('مسح الكل'),
                     ),
                   ],
                 ),

@@ -9,7 +9,6 @@ import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
-import 'package:abosiefienapp/core/theme/app_styles_util.dart';
 import 'package:abosiefienapp/core/utils/app_debug_prints.dart';
 
 class MakhdomDetailsScreen extends HookConsumerWidget {
@@ -19,12 +18,15 @@ class MakhdomDetailsScreen extends HookConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final GlobalKey<FormState> formKey = useMemoized(() => GlobalKey<FormState>());
-    
+    final GlobalKey<FormState> formKey =
+        useMemoized(() => GlobalKey<FormState>());
+
     // Initialize data once
     useEffect(() {
       Future.microtask(() {
-        ref.read(makhdomDetailsNotifierProvider.notifier).setRecievedMakhdom(makhdom);
+        ref
+            .read(makhdomDetailsNotifierProvider.notifier)
+            .setRecievedMakhdom(makhdom);
       });
       return null;
     }, []);
@@ -34,7 +36,8 @@ class MakhdomDetailsScreen extends HookConsumerWidget {
 
     // Validation helpers (replicated from Validator extension)
     bool isValidName(String? text) {
-      if (text == null || text.isEmpty) return false; // "isEmpty" logic from extension
+      if (text == null || text.isEmpty)
+        return false; // "isEmpty" logic from extension
       return RegExp(r"^(?=.*?[a-z A-Z]).{2,}$").hasMatch(text);
     }
 
@@ -46,11 +49,7 @@ class MakhdomDetailsScreen extends HookConsumerWidget {
 
     return Scaffold(
       appBar: AppBar(
-        title: Text(
-          "بيانات المخدوم",
-          style: AppStylesUtil.textRegularStyle(
-              20.0, Colors.black, FontWeight.w500),
-        ),
+        title: const Text("بيانات المخدوم"),
       ),
       body: Form(
         key: formKey,
@@ -70,24 +69,27 @@ class MakhdomDetailsScreen extends HookConsumerWidget {
                     children: [
                       Text(
                         'كود المخـدوم :   ',
-                        style: AppStylesUtil.textRegularStyle(
-                            16, Colors.black, FontWeight.w500),
+                        style: Theme.of(context)
+                            .textTheme
+                            .bodyLarge
+                            ?.copyWith(fontWeight: FontWeight.w500),
                       ),
                       Text(
                         makhdomState.id != 0
                             ? makhdomState.id.toString()
                             : 'لا يوجد',
-                        style: AppStylesUtil.textRegularStyle(
-                            16, Colors.black, FontWeight.w500),
+                        style: Theme.of(context)
+                            .textTheme
+                            .bodyLarge
+                            ?.copyWith(fontWeight: FontWeight.w500),
                       ),
                     ],
                   ),
                 ),
                 InputFieldWidget(
                   labeltext: 'الإسم',
-                  initialvalue: makhdomState.name != 'null'
-                      ? makhdomState.name
-                      : '',
+                  initialvalue:
+                      makhdomState.name != 'null' ? makhdomState.name : '',
                   width: MediaQuery.of(context).size.width - 40,
                   keyboardType: TextInputType.text,
                   validation: isValidName(makhdomState.name),
@@ -100,9 +102,8 @@ class MakhdomDetailsScreen extends HookConsumerWidget {
                 ),
                 InputFieldWidget(
                     labeltext: 'التليفون',
-                    initialvalue: makhdomState.phone != 'null'
-                        ? makhdomState.phone
-                        : '',
+                    initialvalue:
+                        makhdomState.phone != 'null' ? makhdomState.phone : '',
                     width: MediaQuery.of(context).size.width - 40,
                     keyboardType: TextInputType.number,
                     lines: 1,
@@ -126,7 +127,8 @@ class MakhdomDetailsScreen extends HookConsumerWidget {
                     }),
                 GenderSelect(
                     checkedIncome: false,
-                    radioValue: RadioButtonModel(makhdomState.genderId ?? 1, true),
+                    radioValue:
+                        RadioButtonModel(makhdomState.genderId ?? 1, true),
                     title1: 'النوع',
                     title2: 'ذكر',
                     title3: 'انثى',
@@ -184,49 +186,35 @@ class MakhdomDetailsScreen extends HookConsumerWidget {
                       'تاريخ الميلاد',
                       textDirection: TextDirection.rtl,
                       textAlign: TextAlign.start,
-                      style: AppStylesUtil.textRegularStyle(
-                          14.sp, Colors.black, FontWeight.normal),
+                      style: Theme.of(context).textTheme.bodyMedium,
                     ),
                   ),
                 ),
-                Container(
+                SizedBox(
                   width: MediaQuery.of(context).size.width - 40,
-                  height: 40.h,
-                  padding: EdgeInsets.symmetric(horizontal: 5.w),
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(10.sp),
-                    border: Border.all(
-                      color: Colors.blue,
-                      width: 2.0,
+                  child: OutlinedButton.icon(
+                    icon: const Icon(Icons.calendar_today_rounded, size: 18),
+                    label: Text(
+                      makhdomState.birthdate == null
+                          ? '2023/1/1'
+                          : '${notifier.convertToDate(makhdomState.birthdate ?? '')}',
                     ),
-                  ),
-                  child: InkWell(
-                    onTap: () async {
+                    onPressed: () async {
                       printWarning(
                           'OLD BIRTHDAY ${makhdomState.birthdate ?? ''}');
-                      DateTime? selected =
-                          await customShowDatePicker(context);
+                      final DateTime? selected = await customShowDatePicker(
+                        context,
+                        firstDate: DateTime(1950),
+                      );
                       notifier.changeBirthdate(selected);
                     },
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Text(
-                          makhdomState.birthdate == null
-                              ? '2023/1/1'
-                              : '${notifier.convertToDate(makhdomState.birthdate ?? '')}',
-                          style: AppStylesUtil.textBoldStyle(
-                            16.sp,
-                            Colors.black,
-                            FontWeight.w400,
-                          ),
-                        ),
-                        Icon(
-                          Icons.date_range,
-                          color: Colors.blue,
-                          size: 20.sp,
-                        ),
-                      ],
+                    style: OutlinedButton.styleFrom(
+                      alignment: AlignmentDirectional.centerStart,
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 16, vertical: 14),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(12),
+                      ),
                     ),
                   ),
                 ),
@@ -237,8 +225,8 @@ class MakhdomDetailsScreen extends HookConsumerWidget {
                         ? makhdomState.father.toString()
                         : '',
                     width: MediaQuery.of(context).size.width - 40,
-                    validation:
-                        makhdomState.father != null && makhdomState.father!.isNotEmpty,
+                    validation: makhdomState.father != null &&
+                        makhdomState.father!.isNotEmpty,
                     keyboardType: TextInputType.text,
                     lines: 1,
                     obscure: false,
@@ -252,7 +240,8 @@ class MakhdomDetailsScreen extends HookConsumerWidget {
                         ? makhdomState.university.toString()
                         : '',
                     width: MediaQuery.of(context).size.width - 40,
-                    validation: makhdomState.university != null && makhdomState.university!.isNotEmpty,
+                    validation: makhdomState.university != null &&
+                        makhdomState.university!.isNotEmpty,
                     keyboardType: TextInputType.text,
                     lines: 1,
                     obscure: false,
@@ -266,7 +255,8 @@ class MakhdomDetailsScreen extends HookConsumerWidget {
                         ? makhdomState.faculty.toString()
                         : '',
                     width: MediaQuery.of(context).size.width - 40,
-                    validation: makhdomState.faculty != null && makhdomState.faculty!.isNotEmpty,
+                    validation: makhdomState.faculty != null &&
+                        makhdomState.faculty!.isNotEmpty,
                     keyboardType: TextInputType.text,
                     lines: 1,
                     obscure: false,
@@ -292,7 +282,8 @@ class MakhdomDetailsScreen extends HookConsumerWidget {
                         ? makhdomState.notes.toString()
                         : '',
                     width: MediaQuery.of(context).size.width - 40,
-                    validation: makhdomState.notes != null && makhdomState.notes!.isNotEmpty,
+                    validation: makhdomState.notes != null &&
+                        makhdomState.notes!.isNotEmpty,
                     keyboardType: TextInputType.text,
                     lines: 4,
                     obscure: false,
@@ -301,27 +292,15 @@ class MakhdomDetailsScreen extends HookConsumerWidget {
                       notifier.updateNotes(value);
                     }),
                 const SizedBox(height: 20),
-                ElevatedButton(
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.blue,
-                    fixedSize:
-                        Size(MediaQuery.of(context).size.width - 40, 40),
-                    padding: const EdgeInsets.symmetric(
-                        horizontal: 20.0, vertical: 8.0),
-                    shape: const RoundedRectangleBorder(
-                      borderRadius: BorderRadius.all(
-                        Radius.circular(20.0),
-                      ),
-                    ),
+                FilledButton(
+                  style: FilledButton.styleFrom(
+                    minimumSize:
+                        Size(MediaQuery.of(context).size.width - 40, 48),
                   ),
-                  child: Text('تعديل',
-                      style: AppStylesUtil.textBoldStyle(
-                          18, Colors.white, FontWeight.bold)),
                   onPressed: () {
-                    // Logic already prints inside provider or here? 
-                    // Let's call update directly
                     notifier.updateMyMakhdom(context, makhdomState);
                   },
+                  child: const Text('تعديل'),
                 ),
               ],
             ),

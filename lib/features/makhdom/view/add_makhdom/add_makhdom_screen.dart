@@ -23,7 +23,7 @@ class AddMakhdomScreen extends HookConsumerWidget {
 
     useEffect(() {
       Future.microtask(() =>
-        ref.read(addMakhdomNotifierProvider.notifier).getkhadem(context));
+          ref.read(addMakhdomNotifierProvider.notifier).getkhadem(context));
       return null;
     }, const []);
 
@@ -53,7 +53,8 @@ class AddMakhdomScreen extends HookConsumerWidget {
                     value: state.selectedKhadem,
                     onChanged: (val) {
                       addMakhdomProviderVar.setSelectedKhadem(val ?? 2);
-                      printDone('Selected Khadem updated ${state.selectedKhadem}');
+                      printDone(
+                          'Selected Khadem updated ${state.selectedKhadem}');
                     },
                   ),
                 ),
@@ -64,7 +65,8 @@ class AddMakhdomScreen extends HookConsumerWidget {
                   controller: addMakhdomProviderVar.nameController,
                   keyboardType: TextInputType.text,
                   textInputAction: TextInputAction.next,
-                  validation: addMakhdomProviderVar.nameController.isValidName(),
+                  validation:
+                      addMakhdomProviderVar.nameController.isValidName(),
                   validationText: 'يجب إدخال الإسم',
                   lines: 1,
                   obscure: false,
@@ -77,7 +79,8 @@ class AddMakhdomScreen extends HookConsumerWidget {
                     controller: addMakhdomProviderVar.phoneController,
                     keyboardType: TextInputType.number,
                     textInputAction: TextInputAction.next,
-                    validation: addMakhdomProviderVar.phoneController.isValidPhone(),
+                    validation:
+                        addMakhdomProviderVar.phoneController.isValidPhone(),
                     validationText: 'يجب إدخال رقم تليفون صحيح',
                     lines: 1,
                     obscure: false,
@@ -155,12 +158,17 @@ class AddMakhdomScreen extends HookConsumerWidget {
                       style: Theme.of(context).textTheme.bodyLarge,
                     ),
                     onPressed: () async {
-                      DateTime? selected = await customShowDatePicker(context);
+                      DateTime? selected = await customShowDatePicker(
+                        context,
+                        firstDate: DateTime(1950),
+                      );
                       addMakhdomProviderVar.changeBirthdate(selected);
                     },
                     style: OutlinedButton.styleFrom(
                       alignment: Alignment.centerRight,
-                      padding: const EdgeInsets.symmetric(horizontal: AppTheme.spacingM, vertical: AppTheme.spacingM),
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: AppTheme.spacingM,
+                          vertical: AppTheme.spacingM),
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(AppTheme.radiusM),
                       ),
@@ -172,7 +180,8 @@ class AddMakhdomScreen extends HookConsumerWidget {
                     labeltext: 'أب الإعتراف',
                     width: MediaQuery.of(context).size.width - 40,
                     controller: addMakhdomProviderVar.fatherController,
-                    validation: addMakhdomProviderVar.fatherController.isEmpty(),
+                    validation:
+                        addMakhdomProviderVar.fatherController.isEmpty(),
                     keyboardType: TextInputType.text,
                     textInputAction: TextInputAction.next,
                     lines: 1,
@@ -222,26 +231,28 @@ class AddMakhdomScreen extends HookConsumerWidget {
                 const SizedBox(height: 20),
                 FilledButton(
                   style: FilledButton.styleFrom(
-                    minimumSize: Size(MediaQuery.of(context).size.width - 40, 48),
+                    minimumSize:
+                        Size(MediaQuery.of(context).size.width - 40, 48),
                   ),
-                  onPressed: isSubmitting.value ? null : () async {
-                    printDone(addMakhdomProviderVar.nameController.text);
-                    isSubmitting.value = true;
-                    try {
-                      addMakhdomProviderVar.validate(context);
-                    } finally {
-                      if (context.mounted) {
-                        isSubmitting.value = false;
-                      }
-                    }
-                  },
-                  child: isSubmitting.value 
-                    ? const SizedBox(
-                        width: 24, 
-                        height: 24, 
-                        child: CircularProgressIndicator(strokeWidth: 2)
-                      )
-                    : const Text('إضافة'),
+                  onPressed: isSubmitting.value
+                      ? null
+                      : () async {
+                          printDone(addMakhdomProviderVar.nameController.text);
+                          isSubmitting.value = true;
+                          try {
+                            addMakhdomProviderVar.validate(context);
+                          } finally {
+                            if (context.mounted) {
+                              isSubmitting.value = false;
+                            }
+                          }
+                        },
+                  child: isSubmitting.value
+                      ? const SizedBox(
+                          width: 24,
+                          height: 24,
+                          child: CircularProgressIndicator(strokeWidth: 2))
+                      : const Text('إضافة'),
                 ),
               ],
             ),

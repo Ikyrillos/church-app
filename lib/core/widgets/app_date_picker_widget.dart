@@ -1,28 +1,26 @@
-import 'package:date_picker_plus/date_picker_plus.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
 
-import 'package:abosiefienapp/core/theme/app_styles_util.dart';
+/// Shows the Material 3 date picker dialog.
+///
+/// Uses the app's [ColorScheme] and [TextTheme] automatically.
+///
+/// [firstDate] defaults to 1 January 2000, suitable for both attendance
+/// dates and birthdate selection. Pass a custom value if needed.
+/// [lastDate] defaults to today.
+Future<DateTime?> customShowDatePicker(
+  BuildContext context, {
+  DateTime? firstDate,
+  DateTime? lastDate,
+}) async {
+  final now = DateTime.now();
+  final today = DateTime(now.year, now.month, now.day);
 
-Future<DateTime?> customShowDatePicker(BuildContext context) async =>
-    await showDatePickerDialog(
-      context: context,
-      initialDate: DateTime.now(),
-      minDate: DateTime.now().subtract(const Duration(days: 1)),
-      maxDate: DateTime.now(),
-      contentPadding: const EdgeInsets.all(6.0),
-      padding: EdgeInsets.symmetric(horizontal: 40.w, vertical: 120.h),
-      daysOfTheWeekTextStyle:
-          AppStylesUtil.textRegularStyle(14.0, Colors.black, FontWeight.w400),
-      leadingDateTextStyle:
-          AppStylesUtil.textBoldStyle(20.0, Colors.blue, FontWeight.bold),
-      enabledCellsTextStyle:
-          AppStylesUtil.textRegularStyle(16.0, Colors.black, FontWeight.w400),
-      selectedCellTextStyle:
-          AppStylesUtil.textBoldStyle(16.0, Colors.white, FontWeight.w400),
-      currentDateTextStyle:
-          AppStylesUtil.textRegularStyle(16.0, Colors.blue, FontWeight.w500),
-      slidersColor: Colors.blue,
-      barrierColor: Colors.transparent,
-      splashRadius: 8.r,
-    );
+  return showDatePicker(
+    context: context,
+    initialDate: today,
+    firstDate: firstDate ?? DateTime(2000),
+    lastDate: lastDate ?? today,
+    // Calendar mode is the Material 3 default; explicit for clarity.
+    initialEntryMode: DatePickerEntryMode.calendar,
+  );
+}
