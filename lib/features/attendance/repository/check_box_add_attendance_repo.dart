@@ -20,25 +20,35 @@ class CheckBoxAddAttendanceRepository extends Repository {
   }
 
   Future<Either<Failure, List<Map<String, dynamic>>>> getAllNames() async {
+    return getAllNamesFiltered();
+  }
+
+  /// Fetches all names with optional filtering by [levelId] and/or [serviceId].
+  /// Pass null for a param to omit it from the query (fetch all).
+  Future<Either<Failure, List<Map<String, dynamic>>>> getAllNamesFiltered({
+    int? levelId,
+    int? serviceId,
+  }) async {
     return exceptionHandler(
       () async {
-        final Map<String, dynamic> response =
-            await dioHelper.getData(endPont: Endpoints.requestGetAllNames);
+        final Map<String, dynamic> query = {};
+        if (levelId != null) query['levelId'] = levelId;
+        if (serviceId != null) query['serviceId'] = serviceId;
 
-        printWarning(
-            'Response from server: $response'); // تحقق من البيانات المسترجعة
+        final Map<String, dynamic> response = query.isEmpty
+            ? await dioHelper.getData(endPont: Endpoints.requestGetAllNames)
+            : await dioHelper.getDataWithQuery(
+                endPont: Endpoints.requestGetAllNames, query: query);
+
+        printWarning('Response from server: $response');
 
         if (response['success'] == true) {
-          // تأكد من أن البيانات تأتي بالشكل المتوقع
           if (response['data'] != null && response['data'] is List) {
             final data = List<Map<String, dynamic>>.from(response['data']);
             printDone('Data fetched successfully with length: ${data.length}');
-            print('Fetched data: $data'); // طباعة البيانات المسترجعة
-
             return data;
           } else {
-            printError(
-                'Data is not a valid List<Map<String, dynamic>> format.');
+            printError('Data is not a valid List<Map<String, dynamic>> format.');
             throw ServerException(exceptionMessage: 'Invalid data format');
           }
         }
