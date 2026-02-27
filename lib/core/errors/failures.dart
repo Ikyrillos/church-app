@@ -2,7 +2,7 @@ import 'dart:developer';
 
 import 'package:dio/dio.dart';
 
-import 'exceptions.dart';
+import 'package:abosiefienapp/core/errors/exceptions.dart';
 
 abstract class Failure {
   final String message;

@@ -3,9 +3,9 @@ import 'dart:developer';
 import 'package:dartz/dartz.dart';
 import 'package:dio/dio.dart';
 
-import '../errors/exceptions.dart';
-import '../errors/failures.dart';
-import '../network/dio_helper.dart';
+import 'package:abosiefienapp/core/errors/exceptions.dart';
+import 'package:abosiefienapp/core/errors/failures.dart';
+import 'package:abosiefienapp/core/network/dio_helper.dart';
 
 abstract class Repository {
   final DioHelper dioHelper = DioHelper();

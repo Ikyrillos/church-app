@@ -3,10 +3,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import 'core/network/dio_helper.dart';
-import 'core/route/app_routes.dart';
-import 'core/route/route_manager.dart';
-import 'core/shared_prefrence/app_shared_prefrence.dart';
+import 'package:abosiefienapp/core/network/dio_helper.dart';
+import 'package:abosiefienapp/core/route/app_routes.dart';
+import 'package:abosiefienapp/core/route/route_manager.dart';
+import 'package:abosiefienapp/core/services/app_shared_prefrence.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();

@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
-import '../theming/app_styles_util.dart';
+import 'package:abosiefienapp/core/theme/app_styles_util.dart';
 
 class CustomFunctions {
   bool loaderVisible = false;
