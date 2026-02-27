@@ -4,8 +4,8 @@ import 'dart:io';
 
 import 'package:dio/dio.dart';
 
-import '../shared_prefrence/app_shared_prefrence.dart';
-import 'api_endpoints.dart';
+import 'package:abosiefienapp/core/services/app_shared_prefrence.dart';
+import 'package:abosiefienapp/core/network/api_endpoints.dart';
 
 class MyHttpOverrides extends HttpOverrides {
   @override

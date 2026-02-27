@@ -1,18 +1,18 @@
-import 'package:abosiefienapp/model/mymakhdoms_model.dart';
-import 'package:abosiefienapp/presentation/screens/add_attendance/add_attendance_screen.dart';
-import 'package:abosiefienapp/presentation/screens/add_class_attendance/add_class_attendance_screen.dart';
-import 'package:abosiefienapp/presentation/screens/add_makhdom/add_makhdom_screen.dart';
-import 'package:abosiefienapp/presentation/screens/auth/login_screen.dart';
-import 'package:abosiefienapp/presentation/screens/history_of_makhdoms/history_of_makhdoms_screen.dart';
-import 'package:abosiefienapp/presentation/screens/home_screen/home_screen.dart';
-import 'package:abosiefienapp/presentation/screens/makhdom_details/makhdom_details_screen.dart';
-import 'package:abosiefienapp/presentation/screens/manage_of_makhdoms/manage_of_makhdoms_screen.dart';
-import 'package:abosiefienapp/presentation/screens/my_makhdoms/my_makhdoms_screen.dart';
+import 'package:abosiefienapp/features/makhdom/models/mymakhdoms_model.dart';
+import 'package:abosiefienapp/features/attendance/view/add_attendance/add_attendance_screen.dart';
+import 'package:abosiefienapp/features/attendance/view/add_class_attendance/add_class_attendance_screen.dart';
+import 'package:abosiefienapp/features/makhdom/view/add_makhdom/add_makhdom_screen.dart';
+import 'package:abosiefienapp/features/auth/view/login_screen.dart';
+import 'package:abosiefienapp/features/makhdom/view/history_of_makhdoms/history_of_makhdoms_screen.dart';
+import 'package:abosiefienapp/features/home/view/home_screen.dart';
+import 'package:abosiefienapp/features/makhdom/view/makhdom_details/makhdom_details_screen.dart';
+import 'package:abosiefienapp/features/makhdom/view/manage_of_makhdoms/manage_of_makhdoms_screen.dart';
+import 'package:abosiefienapp/features/makhdom/view/my_makhdoms/my_makhdoms_screen.dart';
 import 'package:flutter/material.dart';
 
-import '../../presentation/screens/check_box_add_attendance/widget/check_box_add_attendance_screen.dart';
-import '../utils/app_debug_prints.dart';
-import 'app_routes.dart';
+import 'package:abosiefienapp/features/attendance/view/check_box_add_attendance/widget/check_box_add_attendance_screen.dart';
+import 'package:abosiefienapp/core/utils/app_debug_prints.dart';
+import 'package:abosiefienapp/core/route/app_routes.dart';
 
 class AppRouteManager {
   static Route<dynamic> generateRoute(RouteSettings settings) {
