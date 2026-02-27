@@ -2,48 +2,31 @@ import 'package:abosiefienapp/core/errors/failures.dart';
 import 'package:abosiefienapp/core/utils/custom_function.dart';
 import 'package:abosiefienapp/core/models/dropdown_model.dart';
 import 'package:abosiefienapp/core/models/radio_button_model.dart';
-import 'package:abosiefienapp/features/auth/models/user_model.dart' hide Data;
-import 'package:abosiefienapp/features/makhdom/models/servant_model.dart'
-    as khadem;
+import 'package:abosiefienapp/features/auth/models/user_model.dart';
 import 'package:abosiefienapp/features/makhdom/models/servant_model.dart';
 import 'package:abosiefienapp/features/makhdom/repository/add_makhdom_repo.dart';
 import 'package:abosiefienapp/features/makhdom/repository/khadem_repo.dart';
 import 'package:dartz/dartz.dart';
 import 'package:flutter/material.dart';
+import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:intl/intl.dart' as intl;
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 import 'package:abosiefienapp/core/utils/app_debug_prints.dart';
 import 'package:abosiefienapp/features/auth/providers/login_provider.dart';
 
+part 'add_makhdom_provider.freezed.dart';
 part 'add_makhdom_provider.g.dart';
 
-class AddMakhdomState {
-  final List<ServantData>? allKhodam;
-  final int? selectedKhadem;
-  final List<DropdownModel>? dropdownList;
-  final String? birthdate;
-
-  AddMakhdomState({
-    this.allKhodam,
-    this.selectedKhadem = 2,
-    this.dropdownList,
-    this.birthdate,
-  });
-
-  AddMakhdomState copyWith({
+@freezed
+class AddMakhdomState with _$AddMakhdomState {
+  const factory AddMakhdomState({
     List<ServantData>? allKhodam,
-    int? selectedKhadem,
-    List<DropdownModel>? dropdownList,
-    String? birthdate,
-  }) {
-    return AddMakhdomState(
-      allKhodam: allKhodam ?? this.allKhodam,
-      selectedKhadem: selectedKhadem ?? this.selectedKhadem,
-      dropdownList: dropdownList ?? this.dropdownList,
-      birthdate: birthdate ?? this.birthdate,
-    );
-  }
+    @Default(2) int selectedKhadem,
+    @Default(<DropdownModel>[]) List<DropdownModel> dropdownList,
+    @Default('') String birthdate,
+    @Default(false) bool isLoading,
+  }) = _AddMakhdomState;
 }
 
 @Riverpod(keepAlive: true)
@@ -68,7 +51,7 @@ class AddMakhdomNotifier extends _$AddMakhdomNotifier {
 
   @override
   AddMakhdomState build() {
-    return AddMakhdomState(dropdownList: []);
+    return const AddMakhdomState();
   }
 
   void validate(BuildContext context) {
@@ -139,19 +122,21 @@ class AddMakhdomNotifier extends _$AddMakhdomNotifier {
   }
 
   void setSelectedKhadem(int? value) {
-    state = state.copyWith(selectedKhadem: value);
+    if (value != null) {
+      state = state.copyWith(selectedKhadem: value);
+    }
   }
 
   Future<bool> addMyMakhdom(
-      BuildContext context, Map<String, dynamic> body) async {
-    customFunctions.showProgress(context);
+      BuildContext context, Map<String, Object?> body) async {
+    state = state.copyWith(isLoading: true);
     var responseAddMakhdom = await addMakhdomRepo.requestAddMakhdom(body);
     printDone('response $responseAddMakhdom');
     return responseAddMakhdom.fold(
       (l) {
         printError(l.message);
         customFunctions.showError(message: 'لم يتم الإضافة', context: context);
-        customFunctions.hideProgress();
+        state = state.copyWith(isLoading: false);
         return false;
       },
       (r) {
@@ -159,23 +144,24 @@ class AddMakhdomNotifier extends _$AddMakhdomNotifier {
         customFunctions.showSuccess(
             message: 'تم الإضافة بنجاح', context: context);
         clearForm();
-        customFunctions.hideProgress();
+        state = state.copyWith(isLoading: false);
         return true;
       },
     );
   }
 
-  List<DropdownModel?> createListOfDropDown() {
+  List<DropdownModel> createListOfDropDown() {
     if (state.allKhodam == null) return [];
-    List<DropdownModel> newDropdownList = [];
-    for (int i = 0; i < state.allKhodam!.length; i++) {
-      newDropdownList.add(DropdownModel(
-          id: state.allKhodam![i].id,
-          name: state.allKhodam![i].name,
-          extratext: state.allKhodam![i].serveesCount.toString()));
-    }
+    final List<DropdownModel> newDropdownList = [
+      for (final khadem in state.allKhodam!)
+        DropdownModel(
+          id: khadem.id,
+          name: khadem.name,
+          extratext: khadem.serveesCount.toString(),
+        ),
+    ];
     state = state.copyWith(dropdownList: newDropdownList);
-    return state.dropdownList!;
+    return state.dropdownList;
   }
 
   // GET Khadem

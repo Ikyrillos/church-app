@@ -17,8 +17,9 @@ class MyMakhdomsScreen extends HookConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     useEffect(() {
-      Future.microtask(() =>
-        ref.read(myMakhdomsNotifierProvider.notifier).myMakhdoms(context)
+      Future.microtask(() => ref
+          .read(myMakhdomsNotifierProvider.notifier)
+          .myMakhdoms(context)
           .then((value) => printDone('Done')));
       return null;
     }, const []);
@@ -52,7 +53,8 @@ class MyMakhdomsScreen extends HookConsumerWidget {
     );
   }
 
-  Widget _buildBody(BuildContext context, dynamic mymakhdomsState, dynamic mymakhdomsNotifier) {
+  Widget _buildBody(BuildContext context, MyMakhdomsState mymakhdomsState,
+      MyMakhdomsNotifier mymakhdomsNotifier) {
     if (mymakhdomsState.isLoading == true) {
       return const Center(child: CircularProgressIndicator());
     } else if (mymakhdomsState.allMakhdoms.isEmpty) {
@@ -60,9 +62,11 @@ class MyMakhdomsScreen extends HookConsumerWidget {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(Icons.people_outline, size: 64, color: Theme.of(context).colorScheme.outline),
+            Icon(Icons.people_outline,
+                size: 64, color: Theme.of(context).colorScheme.outline),
             const SizedBox(height: AppTheme.spacingM),
-            Text('لا يوجد مخدومين', style: Theme.of(context).textTheme.bodyLarge)
+            Text('لا يوجد مخدومين',
+                style: Theme.of(context).textTheme.bodyLarge)
           ],
         ),
       );

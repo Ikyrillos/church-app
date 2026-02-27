@@ -7,68 +7,36 @@ import 'package:abosiefienapp/core/models/radio_button_model.dart';
 import 'package:abosiefienapp/features/makhdom/repository/my_makhdoms_repo.dart';
 import 'package:dartz/dartz.dart';
 import 'package:flutter/material.dart';
+import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:intl/intl.dart' as intl;
 import 'package:url_launcher/url_launcher.dart';
 
 import 'package:riverpod_annotation/riverpod_annotation.dart';
-import 'package:abosiefienapp/core/theme/app_styles_util.dart';
 import 'package:abosiefienapp/core/utils/app_debug_prints.dart';
 
+part 'my_makhdoms_provider.freezed.dart';
 part 'my_makhdoms_provider.g.dart';
 
-class MyMakhdomsState {
-  final List<MyServeesData> items;
-  final RadioButtonModel sortValue;
-  final int sortCoulmn;
-  final int sortDirection;
-  final String absentDate;
-  final int listLength;
-  final List<MyServeesData> allMakhdoms;
-  final String errorMsg;
-
-  MyMakhdomsState({
-    required this.items,
-    required this.sortValue,
-    this.sortCoulmn = 1,
-    this.sortDirection = 1,
-    this.absentDate = '',
-    this.listLength = 0,
-    required this.allMakhdoms,
-    this.errorMsg = 'حدث خطأ ما برجاء المحاولة مرة اّخرى',
-  });
-
-  MyMakhdomsState copyWith({
-    List<MyServeesData>? items,
-    RadioButtonModel? sortValue,
-    int? sortCoulmn,
-    int? sortDirection,
-    String? absentDate,
-    int? listLength,
-    List<MyServeesData>? allMakhdoms,
-    String? errorMsg,
-  }) {
-    return MyMakhdomsState(
-      items: items ?? this.items,
-      sortValue: sortValue ?? this.sortValue,
-      sortCoulmn: sortCoulmn ?? this.sortCoulmn,
-      sortDirection: sortDirection ?? this.sortDirection,
-      absentDate: absentDate ?? this.absentDate,
-      listLength: listLength ?? this.listLength,
-      allMakhdoms: allMakhdoms ?? this.allMakhdoms,
-      errorMsg: errorMsg ?? this.errorMsg,
-    );
-  }
+@freezed
+class MyMakhdomsState with _$MyMakhdomsState {
+  const factory MyMakhdomsState({
+    @Default(<MyServeesData>[]) List<MyServeesData> items,
+    required RadioButtonModel sortValue,
+    @Default(1) int sortColumn,
+    @Default(1) int sortDirection,
+    @Default('') String absentDate,
+    @Default(0) int listLength,
+    @Default(<MyServeesData>[]) List<MyServeesData> allMakhdoms,
+    @Default('حدث خطأ ما برجاء المحاولة مرة اّخرى') String errorMsg,
+    @Default(false) bool isLoading,
+  }) = _MyMakhdomsState;
 }
 
 @Riverpod(keepAlive: true)
 class MyMakhdomsNotifier extends _$MyMakhdomsNotifier {
   @override
   MyMakhdomsState build() {
-    return MyMakhdomsState(
-      items: [],
-      sortValue: RadioButtonModel(1, true),
-      allMakhdoms: [],
-    );
+    return MyMakhdomsState(sortValue: RadioButtonModel(1, true));
   }
 
   MyMakhdomsRepo myMakhdomsRepo = MyMakhdomsRepo();
@@ -86,7 +54,7 @@ class MyMakhdomsNotifier extends _$MyMakhdomsNotifier {
   }
 
   void setSelectedSortColumn(int? value) {
-    state = state.copyWith(sortCoulmn: value!);
+    state = state.copyWith(sortColumn: value!);
   }
 
   void setSelectedSortDir(int? value) {
@@ -94,20 +62,20 @@ class MyMakhdomsNotifier extends _$MyMakhdomsNotifier {
   }
 
   Future<bool> myMakhdoms(BuildContext context) async {
-    printWarning('sortCoulmn ${state.sortCoulmn}');
+    printWarning('sortColumn ${state.sortColumn}');
     printWarning('sortDirection ${state.sortDirection}');
     printWarning('absentDate ${state.absentDate}');
-    customFunctions.showProgress(context);
+    state = state.copyWith(isLoading: true);
     Either<Failure, MyServeesModel?> responseMyMakhdoms =
         await myMakhdomsRepo.requestMyMakhdoms(
-            state.sortCoulmn, state.sortDirection, state.absentDate);
+            state.sortColumn, state.sortDirection, state.absentDate);
     printDone('response $responseMyMakhdoms');
 
     bool result = responseMyMakhdoms.fold(
       (Failure l) {
         printError(l.message);
         customFunctions.showError(message: state.errorMsg, context: context);
-        customFunctions.hideProgress();
+        state = state.copyWith(isLoading: false);
         return false;
       },
       (MyServeesModel? r) {
@@ -116,9 +84,9 @@ class MyMakhdomsNotifier extends _$MyMakhdomsNotifier {
           allMakhdoms: r.data!,
           items: r.data!,
           errorMsg: r.errorMsg,
+          isLoading: false,
         );
         printInfo('SET MYMAKHDOMS IN STORAGE NOW');
-        customFunctions.hideProgress();
         return true;
       },
     );
@@ -146,7 +114,7 @@ class MyMakhdomsNotifier extends _$MyMakhdomsNotifier {
             content: Text(error.toString()),
             behavior: SnackBarBehavior.floating,
             shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(12.0)), // AppTheme.radiusM
+                borderRadius: BorderRadius.circular(12.0)),
             backgroundColor: Theme.of(context).colorScheme.errorContainer,
           ),
         );

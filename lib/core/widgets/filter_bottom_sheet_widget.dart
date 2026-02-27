@@ -60,8 +60,6 @@ class FilterBottomSheetWidget extends ConsumerWidget {
                   color: Colors.black,
                   onChanged: (value) {
                     myMakhdomsNotifier.setSelectedSortColumn(value);
-                    printDone(
-                        'SORT COLUMN Updated ${myMakhdomsState.sortCoulmn}');
                   }),
               const ArrangeSectionWidget(),
               const Divider(

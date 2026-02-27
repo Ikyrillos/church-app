@@ -7,7 +7,7 @@ part of 'my_makhdoms_provider.dart';
 // **************************************************************************
 
 String _$myMakhdomsNotifierHash() =>
-    r'7552f0a4ca299d97632de0ad1bd11fa315af13fc';
+    r'9e5649173bd0a4f39217ce3fe07d4934b0660675';
 
 /// See also [MyMakhdomsNotifier].
 @ProviderFor(MyMakhdomsNotifier)
