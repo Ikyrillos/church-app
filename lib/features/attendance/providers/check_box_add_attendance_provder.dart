@@ -3,7 +3,7 @@ import 'package:abosiefienapp/core/errors/failures.dart';
 import 'package:abosiefienapp/core/services/app_shared_prefrence.dart';
 import 'package:abosiefienapp/core/utils/custom_function.dart';
 import 'package:abosiefienapp/core/widgets/toast_m.dart';
-import 'package:abosiefienapp/features/attendance/models/add_Attendance.dart';
+import 'package:abosiefienapp/features/attendance/models/add_attendance_model.dart';
 import 'package:abosiefienapp/features/attendance/repository/add_class_attendance_repo.dart';
 import 'package:abosiefienapp/features/attendance/repository/check_box_add_attendance_repo.dart';
 import 'package:dartz/dartz.dart';
@@ -20,7 +20,7 @@ part 'check_box_add_attendance_provder.g.dart';
 enum DataState { loading, noData, loaded }
 
 class CheckBoxAddAttendanceState {
-  final List<AllNamesModel> data;
+  final List<AddAttendanceModel> data;
   final DataState dataState;
   final Map<String, bool> checkboxStates;
   final String attendanceDate;
@@ -35,7 +35,7 @@ class CheckBoxAddAttendanceState {
   });
 
   CheckBoxAddAttendanceState copyWith({
-    List<AllNamesModel>? data,
+    List<AddAttendanceModel>? data,
     DataState? dataState,
     Map<String, bool>? checkboxStates,
     String? attendanceDate,
@@ -142,8 +142,8 @@ class CheckBoxAddAttendanceNotifier extends _$CheckBoxAddAttendanceNotifier {
     if (maps.isNotEmpty) {
       print('Data retrieved from SQLite: ${maps.length}');
       
-      List<AllNamesModel> loadedData = maps.map((Map<String, dynamic> item) {
-        return AllNamesModel.fromJson(item);
+      List<AddAttendanceModel> loadedData = maps.map((Map<String, dynamic> item) {
+        return AddAttendanceModel.fromJson(item);
       }).toList();
 
       state = state.copyWith(data: loadedData);

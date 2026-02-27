@@ -2,7 +2,7 @@ import 'dart:io';
 
 import 'package:abosiefienapp/core/errors/failures.dart';
 import 'package:abosiefienapp/core/utils/custom_function.dart';
-import 'package:abosiefienapp/features/makhdom/models/mymakhdoms_model.dart';
+import 'package:abosiefienapp/features/makhdom/models/my_servees_model.dart';
 import 'package:abosiefienapp/core/models/radio_button_model.dart';
 import 'package:abosiefienapp/features/makhdom/repository/my_makhdoms_repo.dart';
 import 'package:dartz/dartz.dart';
@@ -17,13 +17,13 @@ import 'package:abosiefienapp/core/utils/app_debug_prints.dart';
 part 'my_makhdoms_provider.g.dart';
 
 class MyMakhdomsState {
-  final List<Data> items;
+  final List<MyServeesData> items;
   final RadioButtonModel sortValue;
   final int sortCoulmn;
   final int sortDirection;
   final String absentDate;
   final int listLength;
-  final List<Data> allMakhdoms;
+  final List<MyServeesData> allMakhdoms;
   final String errorMsg;
 
   MyMakhdomsState({
@@ -38,13 +38,13 @@ class MyMakhdomsState {
   });
 
   MyMakhdomsState copyWith({
-    List<Data>? items,
+    List<MyServeesData>? items,
     RadioButtonModel? sortValue,
     int? sortCoulmn,
     int? sortDirection,
     String? absentDate,
     int? listLength,
-    List<Data>? allMakhdoms,
+    List<MyServeesData>? allMakhdoms,
     String? errorMsg,
   }) {
     return MyMakhdomsState(
@@ -98,7 +98,7 @@ class MyMakhdomsNotifier extends _$MyMakhdomsNotifier {
     printWarning('sortDirection ${state.sortDirection}');
     printWarning('absentDate ${state.absentDate}');
     customFunctions.showProgress(context);
-    Either<Failure, MyMakhdomsModel?> responseMyMakhdoms =
+    Either<Failure, MyServeesModel?> responseMyMakhdoms =
         await myMakhdomsRepo.requestMyMakhdoms(
             state.sortCoulmn, state.sortDirection, state.absentDate);
     printDone('response $responseMyMakhdoms');
@@ -110,7 +110,7 @@ class MyMakhdomsNotifier extends _$MyMakhdomsNotifier {
         customFunctions.hideProgress();
         return false;
       },
-      (MyMakhdomsModel? r) {
+      (MyServeesModel? r) {
         state = state.copyWith(
           listLength: r!.data!.length,
           allMakhdoms: r.data!,

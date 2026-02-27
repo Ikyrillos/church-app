@@ -1,13 +1,15 @@
-class DropdownModel {
-  int? id;
-  String? name;
-  String? extratext;
+import 'package:freezed_annotation/freezed_annotation.dart';
 
-  DropdownModel({this.id, this.name, this.extratext});
+part 'dropdown_model.freezed.dart';
+part 'dropdown_model.g.dart';
 
-  DropdownModel.fromJson(dynamic json) {
-    id = json['id'];
-    name = json['name'];
-    extratext = json['extratext'] ?? '';
-  }
+@freezed
+class DropdownModel with _$DropdownModel {
+  const factory DropdownModel({
+    int? id,
+    String? name,
+    @Default('') String extratext,
+  }) = _DropdownModel;
+
+  factory DropdownModel.fromJson(Map<String, dynamic> json) => _$DropdownModelFromJson(json);
 }

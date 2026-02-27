@@ -8,11 +8,11 @@ import 'package:abosiefienapp/core/app_assets/app_assets_util.dart';
 import 'package:abosiefienapp/core/route/app_routes.dart';
 import 'package:abosiefienapp/core/theme/app_styles_util.dart';
 import 'package:abosiefienapp/core/utils/app_debug_prints.dart';
-import 'package:abosiefienapp/features/makhdom/models/mymakhdoms_model.dart';
+import 'package:abosiefienapp/features/makhdom/models/my_servees_model.dart';
 
 // ignore: must_be_immutable
 class MakdomList extends ConsumerWidget {
-  final Data makhdom;
+  final MyServeesData makhdom;
   final IconData actionIcon;
   final void Function()? handlePress;
   final bool addAttendance;

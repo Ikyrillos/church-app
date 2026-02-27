@@ -1,11 +1,14 @@
-class DefaultModel {
-  int? id;
-  String? name;
+import 'package:freezed_annotation/freezed_annotation.dart';
 
-  DefaultModel({this.id, this.name});
+part 'default_model.freezed.dart';
+part 'default_model.g.dart';
 
-  DefaultModel.fromJson(dynamic json) {
-    id = json['id'];
-    name = json['name'];
-  }
+@freezed
+class DefaultModel with _$DefaultModel {
+  const factory DefaultModel({
+    int? id,
+    String? name,
+  }) = _DefaultModel;
+
+  factory DefaultModel.fromJson(Map<String, dynamic> json) => _$DefaultModelFromJson(json);
 }

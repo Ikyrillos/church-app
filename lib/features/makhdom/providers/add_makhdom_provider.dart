@@ -3,9 +3,9 @@ import 'package:abosiefienapp/core/utils/custom_function.dart';
 import 'package:abosiefienapp/core/models/dropdown_model.dart';
 import 'package:abosiefienapp/core/models/radio_button_model.dart';
 import 'package:abosiefienapp/features/auth/models/user_model.dart' hide Data;
-import 'package:abosiefienapp/features/makhdom/models/khadem_model.dart'
+import 'package:abosiefienapp/features/makhdom/models/servant_model.dart'
     as khadem;
-import 'package:abosiefienapp/features/makhdom/models/khadem_model.dart';
+import 'package:abosiefienapp/features/makhdom/models/servant_model.dart';
 import 'package:abosiefienapp/features/makhdom/repository/add_makhdom_repo.dart';
 import 'package:abosiefienapp/features/makhdom/repository/khadem_repo.dart';
 import 'package:dartz/dartz.dart';
@@ -19,7 +19,7 @@ import 'package:abosiefienapp/features/auth/providers/login_provider.dart';
 part 'add_makhdom_provider.g.dart';
 
 class AddMakhdomState {
-  final List<khadem.Data>? allKhodam;
+  final List<ServantData>? allKhodam;
   final int? selectedKhadem;
   final List<DropdownModel>? dropdownList;
   final String? birthdate;
@@ -32,7 +32,7 @@ class AddMakhdomState {
   });
 
   AddMakhdomState copyWith({
-    List<khadem.Data>? allKhodam,
+    List<ServantData>? allKhodam,
     int? selectedKhadem,
     List<DropdownModel>? dropdownList,
     String? birthdate,
@@ -172,7 +172,7 @@ class AddMakhdomNotifier extends _$AddMakhdomNotifier {
       newDropdownList.add(DropdownModel(
           id: state.allKhodam![i].id,
           name: state.allKhodam![i].name,
-          extratext: state.allKhodam![i].makhdomsCount.toString()));
+          extratext: state.allKhodam![i].serveesCount.toString()));
     }
     state = state.copyWith(dropdownList: newDropdownList);
     return state.dropdownList!;
@@ -180,7 +180,7 @@ class AddMakhdomNotifier extends _$AddMakhdomNotifier {
 
   // GET Khadem
   Future<bool> getkhadem(BuildContext context) async {
-    Either<Failure, KhademModel?> responcekhademmodel =
+    Either<Failure, ServantModel?> responcekhademmodel =
         await khademRepo.requestGetKhadem();
     printDone('response $responcekhademmodel');
     bool success = responcekhademmodel.fold(
@@ -188,7 +188,7 @@ class AddMakhdomNotifier extends _$AddMakhdomNotifier {
         printError(l.message);
         return false;
       },
-      (KhademModel? r) {
+      (ServantModel? r) {
         state = state.copyWith(allKhodam: r!.data);
         printDone('Get Khadem Now');
         createListOfDropDown();

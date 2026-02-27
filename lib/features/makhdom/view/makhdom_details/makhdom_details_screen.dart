@@ -1,5 +1,5 @@
 import 'package:abosiefienapp/features/makhdom/providers/makhdom_details_provider.dart';
-import 'package:abosiefienapp/features/makhdom/models/mymakhdoms_model.dart';
+import 'package:abosiefienapp/features/makhdom/models/my_servees_model.dart';
 import 'package:abosiefienapp/core/models/radio_button_model.dart';
 import 'package:abosiefienapp/core/widgets/app_date_picker_widget.dart';
 import 'package:abosiefienapp/core/widgets/gender.dart';
@@ -13,7 +13,7 @@ import 'package:abosiefienapp/core/theme/app_styles_util.dart';
 import 'package:abosiefienapp/core/utils/app_debug_prints.dart';
 
 class MakhdomDetailsScreen extends HookConsumerWidget {
-  final Data? makhdom;
+  final MyServeesData? makhdom;
 
   const MakhdomDetailsScreen({super.key, this.makhdom});
 

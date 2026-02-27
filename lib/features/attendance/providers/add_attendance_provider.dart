@@ -3,7 +3,7 @@ import 'dart:convert';
 import 'package:abosiefienapp/core/errors/failures.dart';
 import 'package:abosiefienapp/core/services/app_shared_prefrence.dart';
 import 'package:abosiefienapp/core/utils/custom_function.dart';
-import 'package:abosiefienapp/features/attendance/models/add_Attendance.dart';
+import 'package:abosiefienapp/features/attendance/models/add_attendance_model.dart';
 import 'package:abosiefienapp/features/attendance/repository/add_class_attendance_repo.dart';
 import 'package:abosiefienapp/features/attendance/repository/check_box_add_attendance_repo.dart';
 import 'package:dartz/dartz.dart';
@@ -23,7 +23,7 @@ part 'add_attendance_provider.g.dart';
 enum DataState { loading, noData, loaded }
 
 class AddAttendanceState {
-  final List<AllNamesModel> localAttendanceMakhdoms;
+  final List<AddAttendanceModel> localAttendanceMakhdoms;
   final List<String> names;
   final String? foundName;
   final int? foundId;
@@ -48,7 +48,7 @@ class AddAttendanceState {
   });
 
   AddAttendanceState copyWith({
-    List<AllNamesModel>? localAttendanceMakhdoms,
+    List<AddAttendanceModel>? localAttendanceMakhdoms,
     List<String>? names,
     String? foundName,
     int? foundId,
@@ -123,13 +123,13 @@ class AddAttendanceNotifier extends _$AddAttendanceNotifier {
       String name = result[0]['name'];
       int makhdomId = result[0]['id'];
       
-      AllNamesModel makhdom = AllNamesModel.fromJson(result[0]);
+      AddAttendanceModel makhdom = AddAttendanceModel.fromJson(result[0]);
 
       state = state.copyWith(foundName: name, foundId: makhdomId);
 
       // Add to local list if not exists
       if (!state.localAttendanceMakhdoms.any((item) => item.id == makhdomId)) {
-        final newList = List<AllNamesModel>.from(state.localAttendanceMakhdoms)..add(makhdom);
+        final newList = List<AddAttendanceModel>.from(state.localAttendanceMakhdoms)..add(makhdom);
         state = state.copyWith(localAttendanceMakhdoms: newList);
         await saveMakhdomsToCache();
       }
@@ -167,7 +167,7 @@ class AddAttendanceNotifier extends _$AddAttendanceNotifier {
     String? jsonList = prefs.getString('attendanceMakhdoms');
     if (jsonList != null) {
       List<dynamic> decodedList = jsonDecode(jsonList);
-      List<AllNamesModel> list = decodedList.map((item) => AllNamesModel.fromJson(item)).toList();
+      List<AddAttendanceModel> list = decodedList.map((item) => AddAttendanceModel.fromJson(item)).toList();
       state = state.copyWith(localAttendanceMakhdoms: list);
     }
   }

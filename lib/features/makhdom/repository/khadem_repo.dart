@@ -1,4 +1,4 @@
-import 'package:abosiefienapp/features/makhdom/models/khadem_model.dart';
+import 'package:abosiefienapp/features/makhdom/models/servant_model.dart';
 import 'package:dartz/dartz.dart';
 
 import 'package:abosiefienapp/core/app_repository/repo.dart';
@@ -8,7 +8,7 @@ import 'package:abosiefienapp/core/network/api_endpoints.dart';
 import 'package:abosiefienapp/core/utils/app_debug_prints.dart';
 
 class KhademRepo extends Repository {
-  Future<Either<Failure, KhademModel?>> requestGetKhadem() {
+  Future<Either<Failure, ServantModel?>> requestGetKhadem() {
     return exceptionHandler(
       () async {
         printWarning('Iam In Khadem Repo');
@@ -16,7 +16,7 @@ class KhademRepo extends Repository {
           endPont: Endpoints.requestGetKhadem,
         );
         if (response['success'] == true) {
-          return KhademModel.fromJson(response);
+          return ServantModel.fromJson(response);
         }
         throw ServerException(exceptionMessage: response['msg']);
       },

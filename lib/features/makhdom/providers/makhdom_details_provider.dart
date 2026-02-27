@@ -1,8 +1,8 @@
 import 'package:abosiefienapp/core/errors/failures.dart';
 import 'package:abosiefienapp/core/extension_method/extension_navigation.dart';
 import 'package:abosiefienapp/core/utils/custom_function.dart';
-import 'package:abosiefienapp/features/makhdom/models/makhdom_update_model.dart';
-import 'package:abosiefienapp/features/makhdom/models/mymakhdoms_model.dart' as mymakhdomsmodel;
+import 'package:abosiefienapp/features/makhdom/models/servee_update_model.dart';
+import 'package:abosiefienapp/features/makhdom/models/my_servees_model.dart' as myserveesmodel;
 import 'package:abosiefienapp/features/makhdom/repository/update_makhdom_repo.dart';
 import 'package:dartz/dartz.dart';
 import 'package:flutter/material.dart';
@@ -20,11 +20,11 @@ class MakhdomDetailsNotifier extends _$MakhdomDetailsNotifier {
   UpdateMakhdomRepo updateMakhdomRepo = UpdateMakhdomRepo();
 
   @override
-  mymakhdomsmodel.Data? build() {
+  myserveesmodel.MyServeesData? build() {
     return null;
   }
 
-  void setRecievedMakhdom(mymakhdomsmodel.Data? makhdom) {
+  void setRecievedMakhdom(myserveesmodel.MyServeesData? makhdom) {
     state = makhdom;
     printError('recievedMakhdom $state');
   }
@@ -102,11 +102,11 @@ class MakhdomDetailsNotifier extends _$MakhdomDetailsNotifier {
   }
 
   Future<bool?> updateMyMakhdom(
-      BuildContext context, mymakhdomsmodel.Data data) async {
+      BuildContext context, myserveesmodel.MyServeesData data) async {
     printWarning('data $data');
 
     customFunctions.showProgress(context);
-    Either<Failure, MakhdomUpdateModel?> responseUpdateMyMakhdom =
+    Either<Failure, ServeeUpdateModel?> responseUpdateMyMakhdom =
         await updateMakhdomRepo.requestUpdateMakhdom(data);
     printDone('response $responseUpdateMyMakhdom');
     
