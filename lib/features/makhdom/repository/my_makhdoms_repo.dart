@@ -1,5 +1,5 @@
 import 'package:abosiefienapp/core/errors/failures.dart';
-import 'package:abosiefienapp/features/makhdom/models/mymakhdoms_model.dart';
+import 'package:abosiefienapp/features/makhdom/models/my_servees_model.dart';
 import 'package:dartz/dartz.dart';
 import 'package:intl/intl.dart';
 
@@ -9,7 +9,7 @@ import 'package:abosiefienapp/core/network/api_endpoints.dart';
 import 'package:abosiefienapp/core/utils/app_debug_prints.dart';
 
 class MyMakhdomsRepo extends Repository {
-  Future<Either<Failure, MyMakhdomsModel?>> requestMyMakhdoms(
+  Future<Either<Failure, MyServeesModel?>> requestMyMakhdoms(
       int sortColumn, int sortDirection, String absentDate) {
     final String formattedDate =
         DateFormat('yyyy-MM-dd').format(DateTime.now());
@@ -24,14 +24,14 @@ class MyMakhdomsRepo extends Repository {
           "absentDate": formattedDate,
         });
         if (response['success'] == true) {
-          return MyMakhdomsModel.fromJson(response);
+          return MyServeesModel.fromJson(response);
         }
         throw ServerException(exceptionMessage: response['msg']);
       },
     );
   }
 
-  Future<Either<Failure, dynamic>> requestUpdateMakhdom(Data data) {
+  Future<Either<Failure, dynamic>> requestUpdateMakhdom(MyServeesData data) {
     return exceptionHandler(
       () async {
         printWarning('Iam In HistoryOfMakhdoms Repo');
@@ -53,7 +53,7 @@ class MyMakhdomsRepo extends Repository {
             "university": data.university,
             "faculty": data.faculty,
             "studentYear": data.studentYear,
-            "khademId": data.khademId,
+            "khademId": data.servantId,
             "groupId": data.groupId,
             "notes": data.notes,
             "levelId": data.levelId,
@@ -71,7 +71,7 @@ class MyMakhdomsRepo extends Repository {
     );
   }
 
-  // Future requestUpdateMakhdom(Data data) {
+  // Future requestUpdateMakhdom(MyServeesData data) {
   //   printWarning('Iam In HistoryOfMakhdoms Repo');
   //   return networkManager.put<dynamic>(
   //       Endpoints.REQUEST_UPDATE_MAKHDOM, data.toJson());

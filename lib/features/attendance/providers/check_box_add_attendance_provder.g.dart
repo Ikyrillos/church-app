@@ -7,7 +7,7 @@ part of 'check_box_add_attendance_provder.dart';
 // **************************************************************************
 
 String _$checkBoxAddAttendanceNotifierHash() =>
-    r'749d37faf91bbfe0f1c810ee75975b3b65d81638';
+    r'26e382b5578189bb8354377bcf97e1978dde42de';
 
 /// See also [CheckBoxAddAttendanceNotifier].
 @ProviderFor(CheckBoxAddAttendanceNotifier)

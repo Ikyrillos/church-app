@@ -7,7 +7,7 @@ part of 'add_class_attendance_provider.dart';
 // **************************************************************************
 
 String _$addClassAttendanceNotifierHash() =>
-    r'48eb253cef013269b7be599901c8df85b63cdcd3';
+    r'5e037135d609e1e378bfebf36ac17f27e209e751';
 
 /// See also [AddClassAttendanceNotifier].
 @ProviderFor(AddClassAttendanceNotifier)

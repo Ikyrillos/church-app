@@ -1,4 +1,4 @@
-import 'package:abosiefienapp/features/makhdom/models/mymakhdoms_model.dart';
+import 'package:abosiefienapp/features/makhdom/models/my_servees_model.dart';
 import 'package:abosiefienapp/features/attendance/view/add_attendance/add_attendance_screen.dart';
 import 'package:abosiefienapp/features/attendance/view/add_class_attendance/add_class_attendance_screen.dart';
 import 'package:abosiefienapp/features/makhdom/view/add_makhdom/add_makhdom_screen.dart';
@@ -43,7 +43,7 @@ class AppRouteManager {
         return MaterialPageRoute(
           settings: RouteSettings(arguments: args),
           builder: (context) => MakhdomDetailsScreen(
-            makhdom: args as Data,
+            makhdom: args as MyServeesData,
           ),
         );
       case AppRoutes.addMakhdomRouteName:

@@ -1,115 +1,45 @@
-class UserModel {
-  Data? data;
-  String? code;
-  String? errorMsg;
-  int? count;
-  int? pageNo;
-  bool? success;
-  List<String>? listData;
+import 'package:freezed_annotation/freezed_annotation.dart';
 
-  UserModel(
-      {this.data,
-      this.code,
-      this.errorMsg,
-      this.count,
-      this.pageNo,
-      this.success,
-      this.listData});
+part 'user_model.freezed.dart';
+part 'user_model.g.dart';
 
-  UserModel.fromJson(Map<String, dynamic> json) {
-    data = json['data'] != null ? Data.fromJson(json['data']) : null;
-    code = json['code'] ?? '';
-    errorMsg = json['errorMsg'] ?? '';
-    count = json['count'] ?? 0;
-    pageNo = json['pageNo'] ?? 0;
-    success = json['success'] ?? false;
-    listData =
-        json['listData'] != null ? json['listData'].cast<String>() : [''];
-  }
+@freezed
+class UserModel with _$UserModel {
+  const factory UserModel({
+    UserData? data,
+    @Default('') String code,
+    @Default('') String errorMsg,
+    @Default(0) int count,
+    @Default(0) int pageNo,
+    @Default(false) bool success,
+    @Default([]) List<String> listData,
+  }) = _UserModel;
 
-  Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = <String, dynamic>{};
-    if (this.data != null) {
-      data['data'] = this.data!.toJson();
-    }
-    data['code'] = code;
-    data['errorMsg'] = errorMsg;
-    data['count'] = count;
-    data['pageNo'] = pageNo;
-    data['success'] = success;
-    data['listData'] = listData;
-    return data;
-  }
+  factory UserModel.fromJson(Map<String, dynamic> json) => _$UserModelFromJson(json);
 }
 
-class Data {
-  int? userId;
-  int? khademId;
-  String? userName;
-  bool? isActive;
-  int? roleId;
-  String? roleName;
-  String? token;
-  int? levelId;
-  List<Permissions>? permissions;
+@freezed
+class UserData with _$UserData {
+  const factory UserData({
+    @Default(0) int userId,
+    @JsonKey(name: 'khademId') @Default(0) int servantId,
+    @Default('') String userName,
+    @Default(false) bool isActive,
+    @Default(0) int roleId,
+    @Default('') String roleName,
+    @Default('') String token,
+    @Default(0) int levelId,
+    @Default([]) List<Permissions> permissions,
+  }) = _UserData;
 
-  Data(
-      {this.userId,
-      this.khademId,
-      this.userName,
-      this.isActive,
-      this.roleId,
-      this.roleName,
-      this.token,
-      this.levelId,
-      this.permissions});
-
-  Data.fromJson(Map<String, dynamic> json) {
-    userId = json['userId'] ?? 0;
-    khademId = json['khademId'] ?? 0;
-    userName = json['userName'] ?? '';
-    isActive = json['isActive'] ?? false;
-    roleId = json['roleId'] ?? 0;
-    roleName = json['roleName'] ?? '';
-    token = json['token'] ?? '';
-    levelId = json['levelId'] ?? 0;
-    if (json['permissions'] != null) {
-      permissions = <Permissions>[];
-      json['permissions'].forEach((v) {
-        permissions!.add(Permissions.fromJson(v));
-      });
-    }
-  }
-
-  Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = <String, dynamic>{};
-    data['userId'] =  userId;
-    data['khademId'] = khademId;
-    data['userName'] = userName;
-    data['isActive'] = isActive;
-    data['roleId'] = roleId;
-    data['roleName'] = roleName;
-    data['token'] = token;
-    data['levelId'] = levelId;
-    if (permissions != null) {
-      data['permissions'] = permissions!.map((v) => v.toJson()).toList();
-    }
-    return data;
-  }
+  factory UserData.fromJson(Map<String, dynamic> json) => _$UserDataFromJson(json);
 }
 
-class Permissions {
-  String? permissionName;
+@freezed
+class Permissions with _$Permissions {
+  const factory Permissions({
+    @Default('') String permissionName,
+  }) = _Permissions;
 
-  Permissions({this.permissionName});
-
-  Permissions.fromJson(Map<String, dynamic> json) {
-    permissionName = json['permissionName'] ?? '';
-  }
-
-  Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = <String, dynamic>{};
-    data['permissionName'] = permissionName;
-    return data;
-  }
+  factory Permissions.fromJson(Map<String, dynamic> json) => _$PermissionsFromJson(json);
 }
