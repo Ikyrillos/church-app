@@ -42,12 +42,12 @@ extension Validator on TextEditingController {
   }
 
   bool isEmpty() {
-    if (text.isEmpty || text == null) return false;
+    if (text.isEmpty) return false;
     return true;
   }
 
   bool trimmedAndStillEmpty() {
-    return text == null || text.trim().isEmpty;
+    return text.trim().isEmpty;
   }
 
   bool isValidName() {

@@ -208,10 +208,8 @@ class AddAttendanceScreen extends HookConsumerWidget {
                         trailing: IconButton(
                           icon: const Icon(Icons.delete),
                           onPressed: () {
-                            if (item.id != null) {
-                               notifier.removeMakhdom(item.id!);
-                            }
-                          },
+                             notifier.removeMakhdom(item.id);
+                                                    },
                         ),
                       ),
                     );

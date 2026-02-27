@@ -15,10 +15,10 @@ class AddMakhdomScreen extends ConsumerStatefulWidget {
   const AddMakhdomScreen({super.key});
 
   @override
-  _AddMakhdomScreenState createState() => _AddMakhdomScreenState();
+  AddMakhdomScreenState createState() => AddMakhdomScreenState();
 }
 
-class _AddMakhdomScreenState extends ConsumerState<AddMakhdomScreen> {
+class AddMakhdomScreenState extends ConsumerState<AddMakhdomScreen> {
   FocusNode focusNode = FocusNode();
 
   @override
@@ -29,7 +29,10 @@ class _AddMakhdomScreenState extends ConsumerState<AddMakhdomScreen> {
 
   Future<void> callGetKhademApi() async {
     Future.delayed(Duration.zero, () {
-      ref.read(addMakhdomNotifierProvider.notifier).getkhadem(context).then((value) {
+      ref
+          .read(addMakhdomNotifierProvider.notifier)
+          .getkhadem(context)
+          .then((value) {
         printDone('Done $value');
       });
     });
@@ -39,7 +42,8 @@ class _AddMakhdomScreenState extends ConsumerState<AddMakhdomScreen> {
   Widget build(BuildContext context) {
     return Consumer(builder: (context, ref, child) {
       final state = ref.watch(addMakhdomNotifierProvider);
-      final addMakhdomProviderVar = ref.read(addMakhdomNotifierProvider.notifier);
+      final addMakhdomProviderVar =
+          ref.read(addMakhdomNotifierProvider.notifier);
       return Scaffold(
         appBar: AppBar(
           title: Text(

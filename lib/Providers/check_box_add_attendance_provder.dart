@@ -1,4 +1,3 @@
-import 'dart:io';
 
 import 'package:abosiefienapp/core/errors/failures.dart';
 import 'package:abosiefienapp/core/shared_prefrence/app_shared_prefrence.dart';
@@ -86,12 +85,10 @@ class CheckBoxAddAttendanceNotifier extends _$CheckBoxAddAttendanceNotifier {
   Future<void> loadCheckboxStates() async {
     final newStates = Map<String, bool>.from(state.checkboxStates);
     for (var item in state.data) {
-      if (item.id != null) {
-        String idStr = item.id.toString();
-        bool? val = AppSharedPreferences.getBool(idStr);
-        newStates[idStr] = val ?? false;
-      }
-    }
+      String idStr = item.id.toString();
+      bool? val = AppSharedPreferences.getBool(idStr);
+      newStates[idStr] = val ?? false;
+        }
     state = state.copyWith(checkboxStates: newStates);
   }
 
@@ -160,10 +157,8 @@ class CheckBoxAddAttendanceNotifier extends _$CheckBoxAddAttendanceNotifier {
 
   Future<void> clearCheckboxStates() async {
     for (var item in state.data) {
-      if (item.id != null) {
-        await AppSharedPreferences.remove(item.id.toString());
-      }
-    }
+      await AppSharedPreferences.remove(item.id.toString());
+        }
     state = state.copyWith(checkboxStates: {});
   }
 
