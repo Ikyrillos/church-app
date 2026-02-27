@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:abosiefienapp/core/errors/failures.dart';
 import 'package:abosiefienapp/core/utils/custom_function.dart';
+import 'package:abosiefienapp/core/widgets/toast_m.dart';
 import 'package:abosiefienapp/features/makhdom/models/my_servees_model.dart';
 import 'package:abosiefienapp/core/models/radio_button_model.dart';
 import 'package:abosiefienapp/features/makhdom/repository/my_makhdoms_repo.dart';
@@ -109,15 +110,7 @@ class MyMakhdomsNotifier extends _$MyMakhdomsNotifier {
       try {
         launchUrl(Uri.parse(url()));
       } catch (error) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text(error.toString()),
-            behavior: SnackBarBehavior.floating,
-            shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(12.0)),
-            backgroundColor: Theme.of(context).colorScheme.errorContainer,
-          ),
-        );
+        AppToast.showError(error.toString());
       }
     }
   }

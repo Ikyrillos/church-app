@@ -17,7 +17,7 @@ class AddMakhdomRepo extends Repository {
         if (response['success'] == true) {
           return response['data'];
         }
-        throw ServerException(exceptionMessage: response['msg']);
+        throw ServerException(exceptionMessage: response['errorMsg']?.toString());
       },
     );
   }

@@ -43,8 +43,8 @@ class CheckBoxAddAttendanceRepository extends Repository {
           }
         }
 
-        printError('Server returned an error: ${response['msg']}');
-        throw ServerException(exceptionMessage: response['msg']);
+        printError('Server returned an error: ${response['errorMsg']}');
+        throw ServerException(exceptionMessage: response['errorMsg']?.toString());
       },
     );
   }

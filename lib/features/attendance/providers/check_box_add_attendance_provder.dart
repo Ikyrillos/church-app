@@ -2,7 +2,7 @@
 import 'package:abosiefienapp/core/errors/failures.dart';
 import 'package:abosiefienapp/core/services/app_shared_prefrence.dart';
 import 'package:abosiefienapp/core/utils/custom_function.dart';
-import 'package:abosiefienapp/core/widgets/toast_m.dart';
+import 'package:abosiefienapp/core/widgets/toast_m.dart' show AppToast;
 import 'package:abosiefienapp/features/attendance/models/add_attendance_model.dart';
 import 'package:abosiefienapp/features/attendance/repository/add_class_attendance_repo.dart';
 import 'package:abosiefienapp/features/attendance/repository/check_box_add_attendance_repo.dart';
@@ -213,7 +213,7 @@ class CheckBoxAddAttendanceNotifier extends _$CheckBoxAddAttendanceNotifier {
     response.fold(
       (Failure l) {
         printError(l.message);
-        ToastM.show(l.message);
+        AppToast.showError(l.message);
         customFunctions.showError(
             message: 'An error occurred, please try again', context: context);
         success = false;

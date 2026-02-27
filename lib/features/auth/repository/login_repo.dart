@@ -31,7 +31,7 @@ class LoginRepo extends Repository {
               SharedPreferencesKeys.userModel, userJson);
           return userdata;
         }
-        throw ServerException(exceptionMessage: response['msg']);
+        throw ServerException(exceptionMessage: response['errorMsg']?.toString());
       },
     );
   }

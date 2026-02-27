@@ -17,7 +17,7 @@ class AddClassAttendanceRepo extends Repository {
         if (response['success'] == true) {
           return response;
         }
-        throw ServerException(exceptionMessage: response['msg']);
+        throw ServerException(exceptionMessage: response['errorMsg']?.toString());
       },
     );
   }

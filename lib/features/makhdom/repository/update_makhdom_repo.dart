@@ -19,7 +19,7 @@ class UpdateMakhdomRepo extends Repository {
           data.toJson(),
         );
         return ServeeUpdateModel.fromJson(response['data']);
-        throw ServerException(exceptionMessage: response['msg']);
+        throw ServerException(exceptionMessage: response['errorMsg']?.toString());
       },
     );
   }

@@ -1,7 +1,8 @@
 {
   "permissions": {
     "allow": [
-      "Bash(dart analyze lib/features/makhdom/providers/my_makhdoms_provider.dart lib/features/makhdom/providers/add_makhdom_provider.dart)"
+      "Bash(dart analyze lib/features/makhdom/providers/my_makhdoms_provider.dart lib/features/makhdom/providers/add_makhdom_provider.dart)",
+      "Bash(flutter pub get)"
     ]
   }
 }

@@ -26,7 +26,7 @@ class MyMakhdomsRepo extends Repository {
         if (response['success'] == true) {
           return MyServeesModel.fromJson(response);
         }
-        throw ServerException(exceptionMessage: response['msg']);
+        throw ServerException(exceptionMessage: response['errorMsg']?.toString());
       },
     );
   }
@@ -66,7 +66,7 @@ class MyMakhdomsRepo extends Repository {
         if (response['success'] == true) {
           return response['data'];
         }
-        throw ServerException(exceptionMessage: response['msg']);
+        throw ServerException(exceptionMessage: response['errorMsg']?.toString());
       },
     );
   }

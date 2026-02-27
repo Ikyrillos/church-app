@@ -18,7 +18,7 @@ class KhademRepo extends Repository {
         if (response['success'] == true) {
           return ServantModel.fromJson(response);
         }
-        throw ServerException(exceptionMessage: response['msg']);
+        throw ServerException(exceptionMessage: response['errorMsg']?.toString());
       },
     );
   }
