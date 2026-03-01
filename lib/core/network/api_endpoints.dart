@@ -1,10 +1,11 @@
 class Endpoints {
   static const baseUrl = prodUrl;
-  static const prodUrl = "https://servicesqc.azurewebsites.net/api/";
+  static const prodUrl =
+      "https://servicesqc-bzdhgxbhekfhd8hn.canadacentral-01.azurewebsites.net/api/";
   static const dev = "https://servicesqc.azurewebsites.net/api/";
 
   static const testBaseUrl =
-      "https://staging-services.azurewebsites.net/swagger/index.html/api/";
+      "https://servicesqc-bzdhgxbhekfhd8hn.canadacentral-01.azurewebsites.net/swagger/index.html";
   static const requestLogin = "auth/login";
   static const requestMyMakhdoms = "makhdom/mymakhdoms";
   static const requestUpdateMakhdom = "makhdom";
